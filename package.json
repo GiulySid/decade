@@ -1,0 +1,8 @@
+{
+	"name": "decade",
+	"version": "1.0.0",
+	"description": "Decade - Game + scores from one folder",
+	"scripts": {
+		"start": "node server.js"
+	}
+}

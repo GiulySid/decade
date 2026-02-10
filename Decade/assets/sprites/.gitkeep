@@ -1,0 +1,5 @@
+# Sprites folder
+# Place sprite sheets and game graphics here
+# Recommended format: PNG with transparency
+# Naming convention: [category]-[name]-[frame].png
+# Example: player-idle-01.png, enemy-slime-walk-01.png

@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=1280" />
+		<title>Decade — Enter Password</title>
+		<link rel="icon" href="Decade/assets/sprites/heart.png" type="image/png" />
+
+		<link rel="preconnect" href="https://fonts.googleapis.com" />
+		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+		<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet" />
+
+		<link rel="stylesheet" href="Decade/css/reset.css" />
+		<link rel="stylesheet" href="Decade/css/base.css" />
+		<link rel="stylesheet" href="Decade/css/themes/era-snes.css" />
+		<link rel="stylesheet" href="Decade/css/components/login.css" />
+	</head>
+	<body class="era-snes login-page">
+		<div class="login-container">
+			<h1 class="login__title">DECADE</h1>
+			<p class="login__sub" id="login-sub">2016 — 2026 · Enter password</p>
+
+			<form id="login-form" class="login__form">
+				<input
+					type="password"
+					id="login-password"
+					class="login__input"
+					placeholder="••••••••"
+					autocomplete="current-password"
+					autofocus
+				/>
+				<button type="submit" class="login__btn">START</button>
+			</form>
+
+			<form id="name-form" class="login__form" style="display: none">
+				<p class="login__sub">ENTER YOUR NAME</p>
+				<p class="login__hint">3–10 chars · A–Z, 0–9, _ · No duplicates</p>
+				<input
+					type="text"
+					id="name-input"
+					class="login__input name-input"
+					maxlength="10"
+					placeholder="___"
+					autocomplete="off"
+					autocapitalize="characters"
+					spellcheck="false"
+				/>
+				<div class="login__scores">
+					<h3 class="login__scores-title">HIGH SCORES</h3>
+					<div class="login__scores-table-wrap">
+						<table class="login__scores-table">
+							<thead>
+								<tr>
+									<th>#</th>
+									<th>NAME</th>
+									<th>SCORE</th>
+									<th>ITEMS</th>
+								</tr>
+							</thead>
+							<tbody id="login-scores-body"></tbody>
+						</table>
+					</div>
+				</div>
+				<button type="submit" class="login__btn">CONTINUE</button>
+			</form>
+
+			<p id="login-error" class="login__error" hidden>WRONG PASSWORD</p>
+		</div>
+
+		<script>
+			(function () {
+				const loginForm = document.getElementById("login-form");
+				const nameForm = document.getElementById("name-form");
+				const passwordInput = document.getElementById("login-password");
+				const nameInput = document.getElementById("name-input");
+				const error = document.getElementById("login-error");
+				const scoresBody = document.getElementById("login-scores-body");
+				const PASSWORD = "password";
+				const API = "https://decadeserver.onrender.com" + "/scores";
+
+				async function loadLeaderboard() {
+					if (!scoresBody) return;
+					scoresBody.innerHTML = "";
+					try {
+						const res = await fetch(API);
+						const data = await res.json();
+						const scores = (data && data.scores) || [];
+						scores.slice(0, 20).forEach((entry, idx) => {
+							const tr = document.createElement("tr");
+							const c = entry.collectibles || {};
+							let items = "";
+							for (let i = 0; i < (c.era1 || 0); i++) items += "💾";
+							for (let i = 0; i < (c.era2 || 0); i++) items += "🦠";
+							for (let i = 0; i < (c.era3 || 0); i++) items += "🌰";
+							tr.innerHTML =
+								"<td>" +
+								(idx + 1) +
+								"</td><td>" +
+								String(entry.name || "---").slice(0, 10) +
+								"</td><td>" +
+								(entry.score || 0) +
+								"</td><td>" +
+								(items || "—") +
+								"</td>";
+							scoresBody.appendChild(tr);
+						});
+						if (scores.length === 0) {
+							const tr = document.createElement("tr");
+							tr.innerHTML = '<td colspan="4" style="text-align:center;color:#888;">No scores yet.</td>';
+							scoresBody.appendChild(tr);
+						}
+					} catch (_) {}
+				}
+
+				function showNameForm() {
+					loginForm.style.display = "none";
+					nameForm.style.display = "block";
+					nameInput.value = "";
+					nameInput.focus();
+					loadLeaderboard();
+				}
+
+				nameInput.addEventListener("input", function () {
+					let v = this.value.toUpperCase().replace(/[^A-Z0-9_]/g, "");
+					if (v.length > 10) v = v.slice(0, 10);
+					this.value = v;
+				});
+
+				loginForm.addEventListener("submit", function (e) {
+					e.preventDefault();
+					error.hidden = true;
+					if (passwordInput.value === PASSWORD) {
+						showNameForm();
+					} else {
+						error.hidden = false;
+						error.textContent = "WRONG PASSWORD";
+						passwordInput.value = "";
+						passwordInput.focus();
+					}
+				});
+
+				nameForm.addEventListener("submit", async function (e) {
+					e.preventDefault();
+					error.hidden = true;
+					const name = (nameInput.value || "")
+						.trim()
+						.toUpperCase()
+						.replace(/[^A-Z0-9_]/g, "");
+					if (name.length < 3) {
+						error.textContent = "Name must be 3–10 chars (A–Z, 0–9, _)";
+						error.hidden = false;
+						return;
+					}
+					try {
+						const res = await fetch(API);
+						const data = await res.json();
+						const scores = (data && data.scores) || [];
+						const exists = scores.some(function (e) {
+							return String(e.name || "").toUpperCase() === name;
+						});
+						if (exists) {
+							error.textContent = "Name already taken. Choose another.";
+							error.hidden = false;
+							return;
+						}
+					} catch (_) {
+						error.textContent = "Scores unavailable offline";
+						error.hidden = false;
+						return;
+					}
+					sessionStorage.setItem("decade_player_name", name);
+					sessionStorage.setItem("decade_auth", "1");
+					window.location.href = "index.html";
+				});
+			})();
+		</script>
+	</body>
+</html>

@@ -1,0 +1,148 @@
+/**
+ * era-n64.css
+ * Nintendo 64 Era Theme (Levels 5-7: 2020-2022)
+ * 
+ * New direction:
+ * - Videogame UI, not terminal
+ * - Green base + pink/magenta accents
+ * - Translucent panels
+ * - CRT menu / Mario 64 / Zelda pause vibe
+ */
+
+ body.era-n64 {
+    /* =========================================
+       COLOR PALETTE — VIDEOGAME N64 STYLE
+       ========================================= */
+    
+    /* Backgrounds - deep emerald with fantasy tone */
+    --color-bg-primary: #0f1f18;
+    --color-bg-secondary: #081510;
+    --color-bg-hud: #0b1813;
+    
+    /* Text */
+    --color-text-primary: #e8fff4;
+    --color-text-secondary: #9ccfc0;
+    --color-text-accent: #ffd86b;   /* warm gold for titles */
+    
+    /* Accents - green + translucent pink */
+    --color-accent-primary: #5cffc7;     /* bright mint green */
+    --color-accent-secondary: #ff6ec7;   /* N64-magenta / pink */
+
+    /* Borders */
+    --color-border: #3a7f6a;
+    --color-border-active: #ffd86b;
+    
+    /* Timeline */
+    --color-timeline-track: #16352a;
+    --color-timeline-progress: #ff6ec7;      /* pink progress */
+    --color-node-locked: #0f1f18;
+    --color-node-available: #ffd86b;
+    --color-node-completed: #5cffc7;
+    --color-node-current: #ff6ec7;
+    
+    /* Buttons */
+    --color-button-bg: #16352a;
+    --color-button-hover: #1f4a3a;
+    --color-button-active: #285c4a;
+    
+    /* Overlay - translucent glass effect */
+    --color-overlay-bg: rgba(8, 21, 16, 0.82);
+}
+
+/* =========================================
+   N64-SPECIFIC STYLING — VIDEOGAME FEEL
+   ========================================= */
+
+body.era-n64 #game-container {
+    /* Magical 3D menu gradient */
+    background: linear-gradient(
+        180deg,
+        #081510 0%,
+        #0f1f18 25%,
+        #14382b 60%,
+        #0f1f18 100%
+    );
+    
+    border-color: #3a7f6a;
+    box-shadow: 
+        0 0 0 4px rgba(92, 255, 199, 0.15),
+        0 0 60px rgba(92, 255, 199, 0.25),
+        0 0 120px rgba(255, 110, 199, 0.12);
+}
+
+body.era-n64 .hud {
+    /* Translucent glass panel */
+    background-image: 
+        linear-gradient(
+            90deg,
+            rgba(255, 255, 255, 0.04) 0%,
+            transparent 20%,
+            transparent 80%,
+            rgba(255, 255, 255, 0.04) 100%
+        );
+    backdrop-filter: blur(2px);
+}
+
+body.era-n64 .hud__title {
+    /* N64 magical logo shadow */
+    text-shadow: 
+        0 0 8px rgba(92, 255, 199, 0.8),
+        2px 2px 0 #ff6ec7,
+        4px 4px 0 rgba(0, 0, 0, 0.6);
+    letter-spacing: 6px;
+}
+
+body.era-n64 .canvas-container {
+    border-color: #3a7f6a;
+    
+    /* Soft inner glow + pink edge */
+    box-shadow: 
+        inset 0 0 50px rgba(92, 255, 199, 0.12),
+        inset 0 0 20px rgba(255, 110, 199, 0.12),
+        inset 0 0 30px rgba(0, 0, 0, 0.6),
+        0 0 25px rgba(92, 255, 199, 0.25);
+}
+
+/* Reduce scanline intensity for N64 (cleaner 3D era) */
+body.era-n64 .canvas-scanlines {
+    background: repeating-linear-gradient(
+        to bottom,
+        transparent 0px,
+        transparent 4px,
+        rgba(0, 0, 0, 0.06) 4px,
+        rgba(0, 0, 0, 0.06) 8px
+    );
+}
+
+body.era-n64 .title__main {
+    /* Mario 64 / Zelda title vibe */
+    text-shadow: 
+        0 0 12px rgba(92, 255, 199, 0.8),
+        3px 3px 0 #ff6ec7,
+        -2px -2px 0 rgba(0, 0, 0, 0.7),
+        0 0 40px rgba(255, 216, 107, 0.4);
+}
+
+body.era-n64 .overlay__content {
+    /* Translucent crystal-like border */
+    border-width: 6px;
+    border-style: solid;
+    border-image: linear-gradient(
+        135deg,
+        #3a7f6a 0%,
+        #5cffc7 40%,
+        #ff6ec7 60%,
+        #3a7f6a 100%
+    ) 1;
+
+    box-shadow:
+        0 0 30px rgba(92, 255, 199, 0.35),
+        0 0 60px rgba(255, 110, 199, 0.2);
+}
+
+/* =========================================
+   OPTIONAL FUTURE IDEAS (NO CLASS CHANGES)
+   - Add subtle animated noise
+   - Add radial vignette on container
+   - Add slow hue-shift on accents
+   ========================================= */

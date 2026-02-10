@@ -1,0 +1,161 @@
+/**
+ * controller.css
+ * Virtual on-screen controller (mobile only).
+ * Overlay-style: clusters on top of the game, translucent buttons, no background images.
+ */
+
+/* Root overlay mounted inside #viewport */
+#virtual-controller.vc-overlay {
+    position: absolute;
+    inset: 0;
+    z-index: 50;
+    pointer-events: none; /* dead zones: only buttons capture touches */
+    opacity: 0.78;
+    touch-action: none;
+    user-select: none;
+    -webkit-user-select: none;
+}
+
+#virtual-controller.vc-overlay.vc-overlay--hidden {
+    display: none;
+}
+
+/* Clusters */
+.vc-cluster {
+    position: absolute;
+    pointer-events: none; /* buttons inside enable pointer events */
+    display: grid;
+    gap: var(--vc-gap);
+}
+
+.vc-left {
+    left: calc(var(--vc-pad) + env(safe-area-inset-left));
+    bottom: calc(var(--vc-pad) + 100px + env(safe-area-inset-bottom));
+}
+
+.vc-right {
+    right: calc(var(--vc-pad) + env(safe-area-inset-right));
+    bottom: calc(var(--vc-pad) + 60px + env(safe-area-inset-bottom));
+}
+
+.vc-top-right {
+    right: calc(var(--vc-pad) + env(safe-area-inset-right));
+    top:70px;
+    /* bottom: calc(var(--vc-pad) + (var(--vc-btn) * 2) + (var(--vc-gap) * 2) + 100px + env(safe-area-inset-bottom)); */
+    display: flex;
+    gap: calc(var(--vc-gap) * 0.8);
+    /* flex-direction: column; */
+}
+
+/* Sizing */
+#virtual-controller {
+    --vc-btn: 50px;
+    --vc-small: 50px;
+    --vc-gap: clamp(10px, 2vw, 18px);
+    --vc-pad: clamp(18px, 3vw, 26px);
+    --vc-pad-top: clamp(12px, 2.2vw, 16px);
+}
+
+/* Buttons */
+.vc-btn {
+    pointer-events: auto;
+    width: var(--vc-btn);
+    height: var(--vc-btn);
+    border-radius: 9999px;
+    background: rgba(255, 255, 255, 0.12);
+    border: 1px solid rgba(255, 255, 255, 0.35);
+    box-shadow: 0 6px 14px rgba(0, 0, 0, 0.35);
+    color: rgba(255, 255, 255, 0.82);
+    font-family: var(--font-pixel);
+    font-size: clamp(10px, 2.2vw, 14px);
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    -webkit-tap-highlight-color: transparent;
+    touch-action: none;
+    user-select: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.vc-btn--small {
+    width: var(--vc-small);
+    height: var(--vc-small);
+    border-radius: 16px;
+    font-size: clamp(9px, 1.8vw, 12px);
+    padding: 0;
+}
+
+.vc-btn--dpad {
+    border-radius: 18px;
+}
+
+.vc-btn.is-pressed,
+.vc-btn:active {
+    background: rgba(255, 255, 255, 0.22);
+    border-color: rgba(255, 255, 255, 0.55);
+    transform: scale(0.96);
+}
+
+/* D-pad layout (cross) */
+.vc-dpad {
+    display: grid;
+    grid-template-areas:
+        ". up ."
+        "left . right"
+        ". down .";
+    gap: calc(var(--vc-gap) * 0.6);
+    align-items: center;
+    justify-items: center;
+}
+.vc-dpad .up { grid-area: up; }
+.vc-dpad .down { grid-area: down; }
+.vc-dpad .left { grid-area: left; }
+.vc-dpad .right { grid-area: right; }
+
+/* Face buttons (SNES/N64): 2x2 grid */
+.vc-face-grid {
+    display: grid;
+    grid-template-columns: repeat(2, var(--vc-btn));
+    grid-template-rows: repeat(2, var(--vc-btn));
+    gap: calc(var(--vc-gap) * 0.7);
+}
+
+/* Face buttons (PS2): diamond */
+.vc-face-diamond {
+    display: grid;
+    grid-template-areas:
+        ". tri ."
+        "sq . cir"
+        ". x .";
+    gap: calc(var(--vc-gap) * 0.55);
+    align-items: center;
+    justify-items: center;
+}
+.vc-face-diamond .triangle { grid-area: tri; }
+.vc-face-diamond .circle { grid-area: cir; }
+.vc-face-diamond .cross { grid-area: x; }
+.vc-face-diamond .square { grid-area: sq; }
+
+/* PS2 symbols: bigger and bold */
+.vc-btn.triangle,
+.vc-btn.circle,
+.vc-btn.cross,
+.vc-btn.square {
+    font-size: clamp(20px, 4vw, 32px);
+    font-weight: bold;
+    line-height: 1;
+}
+
+/* Subtle era tweaks (optional) */
+body.era-snes #virtual-controller { opacity: 0.78; }
+body.era-n64 #virtual-controller { opacity: 0.76; }
+body.era-ps2 #virtual-controller { opacity: 0.74; }
+
+/* Hide controller on desktop regardless */
+@media screen and (min-width: 900px) and (pointer: fine) {
+    #virtual-controller {
+        display: none !important;
+    }
+}
+

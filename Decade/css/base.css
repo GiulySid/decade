@@ -1,0 +1,177 @@
+/**
+ * base.css
+ * Design tokens, CSS variables, and base typography
+ * Theme-agnostic defaults that get overridden by era themes
+ */
+
+:root {
+    /* =========================================
+       LAYOUT DIMENSIONS
+       ========================================= */
+    --game-width: 1024px;
+    --game-height: 720px;
+    --hud-height: 48px;
+    --timeline-height: 72px;
+    --canvas-width: 800px;
+    --canvas-height: 480px;
+    
+    /* =========================================
+       TYPOGRAPHY
+       ========================================= */
+    --font-pixel: 'Press Start 2P', monospace;
+    --font-size-xs: 8px;
+    --font-size-sm: 10px;
+    --font-size-md: 12px;
+    --font-size-lg: 16px;
+    --font-size-xl: 24px;
+    --font-size-title: 32px;
+    
+    /* Line height for pixel font (usually 1.5x font size) */
+    --line-height-base: 1.5;
+    
+    /* =========================================
+       SPACING (8px grid for pixel-perfect alignment)
+       ========================================= */
+    --space-1: 4px;
+    --space-2: 8px;
+    --space-3: 16px;
+    --space-4: 24px;
+    --space-5: 32px;
+    --space-6: 48px;
+    
+    /* =========================================
+       DEFAULT COLORS (Overridden by themes)
+       ========================================= */
+    --color-bg-primary: #1a1a2e;
+    --color-bg-secondary: #16213e;
+    --color-bg-hud: #0f0f1a;
+    
+    --color-text-primary: #eaeaea;
+    --color-text-secondary: #a0a0a0;
+    --color-text-accent: #ffd700;
+    
+    --color-accent-primary: #e94560;
+    --color-accent-secondary: #00d9ff;
+    
+    --color-border: #3a3a5c;
+    --color-border-active: #ffd700;
+    
+    /* =========================================
+       OVERLAY & UI COLORS
+       ========================================= */
+    --color-overlay-bg: rgba(0, 0, 0, 0.85);
+    --color-button-bg: #2a2a4a;
+    --color-button-hover: #3a3a6a;
+    --color-button-active: #4a4a8a;
+    
+    /* =========================================
+       TIMELINE COLORS
+       ========================================= */
+    --color-timeline-track: #2a2a3a;
+    --color-timeline-progress: #e94560;
+    --color-node-locked: #3a3a4a;
+    --color-node-available: #ffd700;
+    --color-node-completed: #00d9ff;
+    --color-node-current: #e94560;
+    
+    /* =========================================
+       ANIMATION TIMING
+       ========================================= */
+    --transition-fast: 100ms;
+    --transition-base: 200ms;
+    --transition-slow: 400ms;
+    
+    /* Pixel-style step transitions */
+    --transition-pixel: steps(4);
+    
+    /* =========================================
+       Z-INDEX LAYERS
+       ========================================= */
+    --z-hud: 100;
+    --z-timeline: 100;
+    --z-canvas-effects: 50;
+    --z-overlay-backdrop: 900;
+    --z-overlay-content: 1000;
+}
+
+/* =========================================
+   BASE STYLES
+   ========================================= */
+
+html {
+    font-size: 16px;
+    background: var(--color-bg-primary);
+}
+
+body {
+    font-family: var(--font-pixel);
+    font-size: var(--font-size-md);
+    line-height: var(--line-height-base);
+    color: var(--color-text-primary);
+    background: var(--color-bg-primary);
+    
+    /* Center the game container */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    
+    /* Subtle background pattern */
+    background-image: 
+        linear-gradient(
+            to bottom,
+            transparent 0%,
+            rgba(0, 0, 0, 0.1) 50%,
+            transparent 100%
+        );
+    background-size: 100% 4px;
+}
+
+/* =========================================
+   TEXT UTILITIES
+   ========================================= */
+
+.text-xs { font-size: var(--font-size-xs); }
+.text-sm { font-size: var(--font-size-sm); }
+.text-md { font-size: var(--font-size-md); }
+.text-lg { font-size: var(--font-size-lg); }
+.text-xl { font-size: var(--font-size-xl); }
+
+.text-accent { color: var(--color-text-accent); }
+.text-secondary { color: var(--color-text-secondary); }
+
+/* =========================================
+   PIXEL BORDER UTILITY
+   ========================================= */
+
+.pixel-border {
+    border: 4px solid var(--color-border);
+    /* Pixel-style corners (no border-radius) */
+    border-radius: 0;
+    /* Optional: box-shadow for depth */
+    box-shadow: 
+        4px 4px 0 rgba(0, 0, 0, 0.3),
+        inset -2px -2px 0 rgba(0, 0, 0, 0.2),
+        inset 2px 2px 0 rgba(255, 255, 255, 0.1);
+}
+
+/* =========================================
+   FOCUS STYLES (Accessibility)
+   ========================================= */
+
+:focus-visible {
+    outline: 4px solid var(--color-text-accent);
+    outline-offset: 2px;
+}
+
+/* =========================================
+   DISABLE TRANSITIONS WHEN REDUCED MOTION
+   ========================================= */
+
+@media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+}
