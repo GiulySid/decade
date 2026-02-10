@@ -1,0 +1,111 @@
+/**
+ * era-snes.css
+ * SNES Era Theme (Levels 1-4: 2016-2019)
+ * 
+ * Visual characteristics:
+ * - 16-bit color palette (limited, vibrant colors)
+ * - Mode 7 inspired gradients
+ * - Softer pixel art feel
+ * - Iconic SNES purple/gray tones
+ */
+
+body.era-snes {
+    /* =========================================
+       COLOR PALETTE
+       Based on SNES hardware colors
+       ========================================= */
+    
+    /* Backgrounds - SNES purple/gray theme */
+    --color-bg-primary: #2d1b4e;
+    --color-bg-secondary: #1a1030;
+    --color-bg-hud: #0f0a1a;
+    
+    /* Text */
+    --color-text-primary: #f0e6ff;
+    --color-text-secondary: #9080b0;
+    --color-text-accent: #ffdd00;
+    
+    /* Accents - Classic SNES button colors */
+    --color-accent-primary: #cc3366;    /* SNES red-pink */
+    --color-accent-secondary: #33ccaa;  /* SNES teal */
+    
+    /* Borders */
+    --color-border: #5544aa;
+    --color-border-active: #ffdd00;
+    
+    /* Timeline */
+    --color-timeline-track: #3a2860;
+    --color-timeline-progress: #cc3366;
+    --color-node-locked: #2a1840;
+    --color-node-available: #ffdd00;
+    --color-node-completed: #33ccaa;
+    --color-node-current: #cc3366;
+    
+    /* Buttons */
+    --color-button-bg: #3a2860;
+    --color-button-hover: #4a3880;
+    --color-button-active: #5a48a0;
+    
+    /* Overlay */
+    --color-overlay-bg: rgba(15, 10, 26, 0.92);
+}
+
+/* =========================================
+   SNES-SPECIFIC STYLING
+   ========================================= */
+
+body.era-snes #game-container {
+    /* Mode 7 inspired gradient background */
+    background: linear-gradient(
+        180deg,
+        #1a1030 0%,
+        #2d1b4e 50%,
+        #1a1030 100%
+    );
+    
+    /* SNES-style border */
+    border-color: #5544aa;
+    box-shadow: 
+        8px 8px 0 rgba(85, 68, 170, 0.3),
+        0 0 60px rgba(45, 27, 78, 0.8);
+}
+
+body.era-snes .hud {
+    /* Subtle scanline texture on HUD */
+    background-image: 
+        repeating-linear-gradient(
+            0deg,
+            transparent 0px,
+            transparent 1px,
+            rgba(0, 0, 0, 0.1) 1px,
+            rgba(0, 0, 0, 0.1) 2px
+        );
+}
+
+body.era-snes .hud__title {
+    text-shadow: 
+        2px 2px 0 #cc3366,
+        -1px -1px 0 #33ccaa;
+}
+
+body.era-snes .canvas-container {
+    /* SNES-style game border */
+    border-color: #5544aa;
+    box-shadow: 
+        inset 0 0 40px rgba(45, 27, 78, 0.6),
+        0 0 15px rgba(204, 51, 102, 0.3);
+}
+
+body.era-snes .title__main {
+    text-shadow: 
+        4px 4px 0 #cc3366,
+        -2px -2px 0 #33ccaa,
+        0 0 30px rgba(204, 51, 102, 0.5);
+}
+
+/* =========================================
+   TODO: Add more SNES-specific effects
+   - Mode 7 rotation effects
+   - SNES color banding
+   - Specific sprite scaling behaviors
+   ========================================= */

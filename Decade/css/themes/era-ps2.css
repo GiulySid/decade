@@ -1,0 +1,180 @@
+/**
+ * era-ps2.css
+ * PlayStation 2 Era Theme (Levels 8-10: 2023-2026)
+ * 
+ * Visual characteristics:
+ * - More sophisticated color palette
+ * - Bloom/glow effects
+ * - Cinematic feel
+ * - PS2 blue brand color
+ * - Higher fidelity visual elements
+ */
+
+body.era-ps2 {
+    /* =========================================
+       COLOR PALETTE
+       Based on PS2 branding and aesthetic
+       ========================================= */
+    
+    /* Backgrounds - PS2 deep blue/black */
+    --color-bg-primary: #0a0a1a;
+    --color-bg-secondary: #101025;
+    --color-bg-hud: #050510;
+    
+    /* Text */
+    --color-text-primary: #f0f4ff;
+    --color-text-secondary: #8090c0;
+    --color-text-accent: #00d4ff;   /* PS2 cyan */
+    
+    /* Accents - PS2 brand colors */
+    --color-accent-primary: #0066ff;    /* PS2 blue */
+    --color-accent-secondary: #ff6600;  /* Contrasting orange */
+    
+    /* Borders */
+    --color-border: #3040a0;
+    --color-border-active: #00d4ff;
+    
+    /* Timeline */
+    --color-timeline-track: #1a1a3a;
+    --color-timeline-progress: #0066ff;
+    --color-node-locked: #0a0a1a;
+    --color-node-available: #00d4ff;
+    --color-node-completed: #00ff88;
+    --color-node-current: #0066ff;
+    
+    /* Buttons */
+    --color-button-bg: #1a1a3a;
+    --color-button-hover: #2a2a5a;
+    --color-button-active: #3a3a7a;
+    
+    /* Overlay */
+    --color-overlay-bg: rgba(5, 5, 16, 0.95);
+}
+
+/* =========================================
+   PS2-SPECIFIC STYLING
+   ========================================= */
+
+body.era-ps2 #game-container {
+    /* PS2 startup-inspired gradient */
+    background: linear-gradient(
+        180deg,
+        #050510 0%,
+        #101025 30%,
+        #0a0a1a 60%,
+        #101025 100%
+    );
+    
+    border-color: #3040a0;
+    
+    /* Bloom glow effect */
+    box-shadow: 
+        8px 8px 0 rgba(0, 102, 255, 0.2),
+        0 0 100px rgba(0, 102, 255, 0.3),
+        0 0 200px rgba(0, 102, 255, 0.1);
+}
+
+body.era-ps2 .hud {
+    /* Sleek gradient */
+    background-image: 
+        linear-gradient(
+            180deg,
+            rgba(0, 102, 255, 0.1) 0%,
+            transparent 100%
+        );
+    
+    /* Blue accent line */
+    border-bottom-color: #3040a0;
+    box-shadow: 0 2px 20px rgba(0, 102, 255, 0.3);
+}
+
+body.era-ps2 .hud__title {
+    /* PS2 cinematic text */
+    text-shadow: 
+        0 0 10px #0066ff,
+        0 0 20px #0066ff,
+        2px 2px 0 rgba(0, 0, 0, 0.8);
+    letter-spacing: 8px;
+}
+
+body.era-ps2 .canvas-container {
+    border-color: #3040a0;
+    
+    /* Heavy bloom effect */
+    box-shadow: 
+        inset 0 0 80px rgba(0, 102, 255, 0.15),
+        inset 0 0 40px rgba(0, 0, 0, 0.6),
+        0 0 40px rgba(0, 102, 255, 0.4),
+        0 0 80px rgba(0, 102, 255, 0.2);
+}
+
+/* Minimal scanlines for PS2 era (modern feel) */
+body.era-ps2 .canvas-scanlines {
+    background: repeating-linear-gradient(
+        to bottom,
+        transparent 0px,
+        transparent 4px,
+        rgba(0, 102, 255, 0.03) 4px,
+        rgba(0, 102, 255, 0.03) 8px
+    );
+}
+
+body.era-ps2 .title__main {
+    /* PS2 cinematic glow */
+    text-shadow: 
+        0 0 20px #0066ff,
+        0 0 40px #0066ff,
+        0 0 60px rgba(0, 212, 255, 0.5),
+        4px 4px 0 rgba(0, 0, 0, 0.8);
+    
+    /* Slight blue tint */
+    color: #e0f0ff;
+}
+
+body.era-ps2 .title__sub {
+    color: #00d4ff;
+    text-shadow: 0 0 15px rgba(0, 212, 255, 0.6);
+}
+
+body.era-ps2 .overlay__content {
+    /* Sleek, modern border */
+    border-color: #3040a0;
+    box-shadow: 
+        8px 8px 0 rgba(0, 0, 0, 0.5),
+        0 0 60px rgba(0, 102, 255, 0.3),
+        inset 0 1px 0 rgba(0, 212, 255, 0.2);
+}
+
+body.era-ps2 .overlay__button--start {
+    background: linear-gradient(
+        180deg,
+        #0077ff 0%,
+        #0055cc 100%
+    );
+    border-color: #00d4ff;
+    
+    box-shadow: 
+        0 0 20px rgba(0, 102, 255, 0.6),
+        inset 0 1px 0 rgba(255, 255, 255, 0.2);
+}
+
+body.era-ps2 .timeline {
+    /* Blue glow on timeline */
+    box-shadow: 0 -2px 30px rgba(0, 102, 255, 0.2);
+}
+
+body.era-ps2 .timeline__progress {
+    background: linear-gradient(
+        90deg,
+        #0066ff 0%,
+        #00d4ff 100%
+    );
+    box-shadow: 0 0 15px #0066ff;
+}
+
+/* =========================================
+   TODO: Add more PS2-specific effects
+   - Particle effects
+   - Motion blur simulation
+   - Cinematic letterboxing option
+   ========================================= */

@@ -1,0 +1,349 @@
+/**
+ * timeline.css
+ * Bottom timeline navigation with 10 level nodes
+ * Shows progression through the decade (2016-2026)
+ */
+
+.timeline {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    
+    height: 100%;
+    padding: var(--space-2) var(--space-4);
+    
+    background: var(--color-bg-hud);
+    border-top: 4px solid var(--color-border);
+    
+    position: relative;
+    
+    /* Allow sprite to overflow above the timeline */
+    overflow: visible;
+}
+
+/* =========================================
+   TIMELINE TRACK
+   ========================================= */
+
+.timeline__track {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    
+    width: 100%;
+    max-width: 900px;
+    
+    position: relative;
+    z-index: 2;
+}
+
+/* Background track line */
+.timeline__track::before {
+    content: '';
+    position: absolute;
+    left: 20px;
+    right: 20px;
+    top: 50%;
+    transform: translateY(-50%);
+    height: 4px;
+    background: var(--color-timeline-track);
+    z-index: -1;
+}
+
+/* =========================================
+   PROGRESS BAR
+   Fills behind nodes as levels complete
+   ========================================= */
+
+.timeline__progress {
+    position: absolute;
+    left: calc(var(--space-4) + 20px);
+    top: 50%;
+    transform: translateY(-50%);
+    height: 4px;
+    width: 0%;
+    max-width: calc(100% - var(--space-4) * 2 - 40px);
+    
+    background: var(--color-timeline-progress);
+    box-shadow: 0 0 8px var(--color-timeline-progress);
+    
+    transition: width var(--transition-slow) ease-out;
+    z-index: 1;
+}
+
+/* =========================================
+   TIMELINE NODES
+   ========================================= */
+
+.timeline__node {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-1);
+    width: 40px;
+    height: 40px;   
+    padding: var(--space-1);
+    
+    cursor: pointer;
+    transition: transform var(--transition-fast);
+    
+    /* Positioning context for static sprites */
+    position: relative;
+    
+    /* Remove button defaults */
+    background: none;
+    border: none;
+}
+
+.timeline__node:hover:not(.timeline__node--locked) {
+    transform: scale(1.8);
+}
+
+.timeline__node:active:not(.timeline__node--locked) {
+    transform: scale(0.95);
+}
+
+/* Node dot (the clickable circle) */
+.timeline__node-dot {
+    width: 20px;
+    height: 20px;
+    
+    background: var(--color-node-locked);
+    border: 3px solid var(--color-border);
+    
+    transition: 
+        background var(--transition-base),
+        border-color var(--transition-base),
+        box-shadow var(--transition-base);
+}
+
+/* Node year label */
+.timeline__node-year {
+    font-size: var(--font-size-xs);
+    color: var(--color-text-secondary);
+    
+    transition: color var(--transition-base);
+}
+
+/* =========================================
+   NODE STATES
+   ========================================= */
+
+/* Locked (not yet available) */
+.timeline__node--locked {
+    cursor: not-allowed;
+    opacity: 0.5;
+}
+
+.timeline__node--locked .timeline__node-dot {
+    background: var(--color-node-locked);
+}
+
+/* Available (can be played) */
+.timeline__node--available .timeline__node-dot {
+    background: var(--color-node-available);
+    border-color: var(--color-node-available);
+    box-shadow: 0 0 12px var(--color-node-available);
+    
+    /* Pulsing animation */
+    animation: node-pulse 1.5s ease-in-out infinite;
+}
+
+.timeline__node--available .timeline__node-year {
+    color: var(--color-node-available);
+}
+
+@keyframes node-pulse {
+    0%, 100% { box-shadow: 0 0 8px var(--color-node-available); }
+    50% { box-shadow: 0 0 20px var(--color-node-available); }
+}
+
+/* Current (actively playing) */
+.timeline__node--current .timeline__node-dot {
+    background: var(--color-node-current);
+    border-color: var(--color-node-current);
+    box-shadow: 0 0 15px var(--color-node-current);
+    
+    /* Stronger pulse for current */
+    animation: node-pulse-current 1s ease-in-out infinite;
+}
+
+.timeline__node--current .timeline__node-year {
+    color: var(--color-node-current);
+    /* Position year absolutely below the sprite (same as completed nodes) */
+    position: absolute;
+    left: 50%;
+    top: calc(50% + 20px); /* Below sprite center */
+    transform: translateX(-50%);
+    margin-top: 0;
+    z-index: 10;
+    white-space: nowrap;
+}
+
+@keyframes node-pulse-current {
+    0%, 100% { 
+        transform: scale(1);
+        box-shadow: 0 0 10px var(--color-node-current); 
+    }
+    50% { 
+        transform: scale(1.2);
+        box-shadow: 0 0 25px var(--color-node-current); 
+    }
+}
+
+/* Completed */
+.timeline__node--completed .timeline__node-dot {
+    background: var(--color-node-completed);
+    border-color: var(--color-node-completed);
+    box-shadow: 0 0 8px var(--color-node-completed);
+}
+
+.timeline__node--completed .timeline__node-year {
+    color: var(--color-node-completed);
+}
+
+/* Completed checkmark (optional) */
+.timeline__node--completed .timeline__node-dot::after {
+    content: '✓';
+    font-size: 10px;
+    color: var(--color-bg-hud);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 100%;
+}
+
+/* Hide dot when sprite is active on this node (current level) */
+.timeline__node--has-sprite .timeline__node-dot {
+    opacity: 0 !important;
+    visibility: hidden !important;
+    transform: scale(0) !important;
+}
+
+/* Also disable animations on the dot when sprite is shown */
+.timeline__node--has-sprite .timeline__node-dot::after {
+    display: none !important;
+}
+
+/* Static sprite inside completed nodes */
+.timeline__node-sprite {
+    display: none;
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    width: 40px;
+    height: 40px;
+    /* Pixelated rendering */
+    image-rendering: pixelated;
+    image-rendering: crisp-edges;
+    -ms-interpolation-mode: nearest-neighbor;
+    
+    /* No pointer events */
+    pointer-events: none;
+    
+    /* Slight transparency for completed levels */
+    opacity: 0.85;
+}
+
+/* For completed nodes: move year below the sprite */
+.timeline__node--completed .timeline__node-year {
+    /* Position year absolutely below the sprite */
+    position: absolute;
+    left: 50%;
+    top: calc(50% + 20px); /* Below sprite center (sprite is 40px, so 20px + 5px gap) */
+    transform: translateX(-50%);
+    margin-top: 0;
+    z-index: 10;
+    white-space: nowrap;
+}
+
+/* =========================================
+   COUPLE SPRITE
+   Animated sprite that appears on current node
+   Now positioned as child of the node element
+   ========================================= */
+
+.timeline-couple-sprite {
+    width:40px !important;
+    height:40px !important;
+    position: absolute;
+    z-index: 150; /* Above the dot */
+    
+    /* Center within the node */
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    
+    /* Hidden by default */
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    
+    /* Quick pixel-like transition */
+    transition: 
+        opacity 100ms steps(2),
+        visibility 100ms steps(2);
+    
+    /* Drop shadow */
+    filter: drop-shadow(2px 2px 0 rgba(0, 0, 0, 0.4));
+}
+
+.timeline-couple-sprite--visible {
+    opacity: 1;
+    visibility: visible;
+}
+
+/* Sprite image element */
+.timeline-couple-sprite__img {
+    display: block;
+    
+    /* Pixelated rendering - critical for retro look */
+    image-rendering: pixelated;
+    image-rendering: crisp-edges;
+    -ms-interpolation-mode: nearest-neighbor;
+    
+    /* Size set by JS (64x64) */
+    object-fit: contain;
+}
+
+/* Bobbing animation - applies to container when animated */
+.timeline-couple-sprite--animated {
+    animation: sprite-bob 600ms steps(2) infinite;
+}
+
+@keyframes sprite-bob {
+    0%, 100% {
+        transform: translate(-50%, -50%);
+    }
+    50% {
+        transform: translate(-50%, calc(-50% - 5px));
+    }
+}
+
+/* =========================================
+   ERA-SPECIFIC SPRITE STYLING
+   ========================================= */
+
+/* SNES era - extra chunky pixels, stronger shadow */
+.timeline-couple-sprite--snes {
+    filter: 
+        drop-shadow(2px 2px 0 rgba(0, 0, 0, 0.5))
+        drop-shadow(0 0 8px var(--color-accent-primary));
+}
+
+/* N64 era - slight softening, fog glow */
+.timeline-couple-sprite--n64 {
+    filter: 
+        drop-shadow(2px 3px 1px rgba(0, 0, 0, 0.4))
+        drop-shadow(0 0 6px rgba(48, 176, 48, 0.3));
+}
+
+/* PS2 era - bloom effect, cinematic */
+.timeline-couple-sprite--ps2 {
+    filter: 
+        drop-shadow(3px 3px 2px rgba(0, 0, 0, 0.3))
+        drop-shadow(0 0 12px rgba(0, 102, 255, 0.4));
+}

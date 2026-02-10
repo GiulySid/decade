@@ -1,0 +1,199 @@
+/**
+ * canvas.css
+ * Game canvas container and retro effects (scanlines, CRT, etc.)
+ */
+
+/* =========================================
+   CANVAS CONTAINER
+   ========================================= */
+
+.canvas-container {
+    position: relative;
+    width: var(--canvas-width);
+    height: var(--canvas-height);
+    
+    /* Pixel-perfect border */
+    border: 4px solid var(--color-border);
+    
+    background: #000;
+    
+    /* Inner shadow for CRT depth */
+    box-shadow: 
+        inset 0 0 50px rgba(0, 0, 0, 0.5),
+        inset 0 0 100px rgba(0, 0, 0, 0.3);
+    
+    /* Prevent canvas overflow */
+    overflow: hidden;
+}
+
+/* =========================================
+   GAME CANVAS
+   ========================================= */
+
+#game-canvas {
+    width: 100%;
+    height: 100%;
+    position: relative;
+    z-index: 2; /* Above WebGL layer */
+    
+    /* Critical: pixelated rendering for retro look */
+    image-rendering: pixelated;
+    image-rendering: crisp-edges;
+    -ms-interpolation-mode: nearest-neighbor;
+    
+    /* Slight vignette via radial gradient overlay */
+    /* Applied via container instead */
+}
+
+/* WebGL layer for 3D games */
+.webgl-layer {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1; /* Behind 2D canvas */
+    pointer-events: none; /* Let 2D canvas handle input */
+}
+
+/* =========================================
+   SCANLINES OVERLAY
+   Classic CRT effect
+   ========================================= */
+
+.canvas-scanlines {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    
+    /* Scanline pattern */
+    background: repeating-linear-gradient(
+        to bottom,
+        transparent 0px,
+        transparent 2px,
+        rgba(0, 0, 0, 0.15) 2px,
+        rgba(0, 0, 0, 0.15) 4px
+    );
+    
+    /* Don't block canvas interaction */
+    pointer-events: none;
+    
+    z-index: var(--z-canvas-effects);
+}
+
+/* =========================================
+   CRT SCREEN CURVATURE (Optional)
+   Uncomment for curved screen effect
+   ========================================= */
+
+/*
+.canvas-container::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    
+    background: radial-gradient(
+        ellipse at center,
+        transparent 60%,
+        rgba(0, 0, 0, 0.4) 100%
+    );
+    
+    pointer-events: none;
+    z-index: var(--z-canvas-effects);
+}
+*/
+
+/* =========================================
+   SCREEN FLICKER (Optional)
+   Very subtle CRT flicker
+   ========================================= */
+
+/*
+.canvas-container::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    
+    background: rgba(255, 255, 255, 0.02);
+    pointer-events: none;
+    
+    animation: screen-flicker 0.1s infinite;
+}
+
+@keyframes screen-flicker {
+    0%, 100% { opacity: 0; }
+    50% { opacity: 1; }
+}
+*/
+
+/* =========================================
+   LOADING STATE
+   ========================================= */
+
+.canvas-container--loading::after {
+    content: 'LOADING...';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    
+    font-family: var(--font-pixel);
+    font-size: var(--font-size-md);
+    color: var(--color-text-secondary);
+    
+    animation: loading-blink 1s step-end infinite;
+}
+
+@keyframes loading-blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.3; }
+}
+
+/* =========================================
+   CANVAS STATES
+   ========================================= */
+
+/* Paused state */
+.canvas-container--paused #game-canvas {
+    filter: brightness(0.5) saturate(0.5);
+}
+
+/* Game over state */
+.canvas-container--gameover #game-canvas {
+    filter: grayscale(0.8) brightness(0.6);
+}
+
+/* Level complete celebration */
+.canvas-container--complete {
+    animation: complete-flash 0.5s ease-out;
+}
+
+@keyframes complete-flash {
+    0% { filter: brightness(2); }
+    100% { filter: brightness(1); }
+}
+
+/* =========================================
+   BORDER GLOW STATES
+   ========================================= */
+
+.canvas-container--active {
+    border-color: var(--color-accent-primary);
+    box-shadow: 
+        inset 0 0 50px rgba(0, 0, 0, 0.5),
+        0 0 20px var(--color-accent-primary);
+}
+
+.canvas-container--success {
+    border-color: var(--color-node-completed);
+    box-shadow: 
+        inset 0 0 50px rgba(0, 0, 0, 0.5),
+        0 0 30px var(--color-node-completed);
+}

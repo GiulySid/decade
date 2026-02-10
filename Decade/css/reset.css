@@ -1,0 +1,97 @@
+/**
+ * reset.css
+ * Minimal CSS reset for consistent cross-browser baseline
+ * Optimized for desktop-only pixel-art game experience
+ */
+
+*, *::before, *::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+html {
+    /* Prevent text size adjustment on orientation change */
+    -webkit-text-size-adjust: 100%;
+    /* Disable smooth scrolling for game feel */
+    scroll-behavior: auto;
+}
+
+body {
+    min-height: 100vh;
+    /* Pixel-perfect rendering */
+    -webkit-font-smoothing: none;
+    -moz-osx-font-smoothing: unset;
+    text-rendering: optimizeSpeed;
+    /* Prevent text selection during gameplay */
+    user-select: none;
+    -webkit-user-select: none;
+}
+
+/* Remove default list styles */
+ul, ol {
+    list-style: none;
+}
+
+/* Reset anchor styles */
+a {
+    text-decoration: none;
+    color: inherit;
+}
+
+/* Normalize button appearance */
+button {
+    font: inherit;
+    color: inherit;
+    background: none;
+    border: none;
+    cursor: pointer;
+    /* Remove tap highlight on touch (though desktop-only) */
+    -webkit-tap-highlight-color: transparent;
+}
+
+button:focus {
+    outline: none;
+}
+
+/* Reset form elements */
+input, textarea, select {
+    font: inherit;
+    color: inherit;
+}
+
+/* Images */
+img, picture, video, canvas, svg {
+    display: block;
+    max-width: 100%;
+}
+
+/* Remove default canvas styling */
+canvas {
+    /* Crisp pixel rendering for retro look */
+    image-rendering: pixelated;
+    image-rendering: crisp-edges;
+}
+
+/* Reset tables */
+table {
+    border-collapse: collapse;
+}
+
+/* Ensure hidden elements are hidden */
+[hidden] {
+    display: none !important;
+}
+
+/* Screen reader only utility */
+.sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+}
