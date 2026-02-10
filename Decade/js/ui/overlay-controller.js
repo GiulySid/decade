@@ -461,6 +461,7 @@ const OverlayController = (function () {
 		const errorEl = document.getElementById("name-entry-error");
 		const skipBtn = document.getElementById("btn-skip-score");
 		const tbody = document.getElementById("name-entry-scores-body");
+		const loader = document.getElementById("name-entry-scores-loader");
 		if (input) {
 			input.value = "";
 			input.maxLength = 10;
@@ -472,6 +473,7 @@ const OverlayController = (function () {
 		}
 		if (skipBtn) skipBtn.style.display = "none";
 		if (tbody) tbody.innerHTML = "";
+		if (loader) loader.hidden = false;
 		_renderScoresTable(tbody, null);
 	}
 
@@ -481,6 +483,9 @@ const OverlayController = (function () {
 	 */
 	async function _renderScoresTable(tbody, highlightName) {
 		if (!tbody) return;
+		const loader = document.getElementById("name-entry-scores-loader");
+		if (loader) loader.hidden = false;
+		tbody.innerHTML = "";
 		try {
 			const res = await ScoresAPI.fetchScores();
 			const scores = (res && res.scores) || [];
@@ -507,7 +512,11 @@ const OverlayController = (function () {
 				tr.innerHTML = '<td colspan="4" class="scores-table__empty">No scores yet.</td>';
 				tbody.appendChild(tr);
 			}
-		} catch (_) {}
+		} catch (_) {
+			// Silent: name-entry overlay will keep empty table if offline
+		} finally {
+			if (loader) loader.hidden = true;
+		}
 	}
 
 	/**
@@ -518,6 +527,7 @@ const OverlayController = (function () {
 		const tbody = document.getElementById("scores-table-body");
 		const errorEl = document.getElementById("scores-error");
 		const closeBtn = document.getElementById("btn-scores-close");
+		const loader = document.getElementById("scores-loader");
 		const fromGameEnd = !!(data && data.fromGameEnd);
 
 		if (closeBtn) {
@@ -525,6 +535,7 @@ const OverlayController = (function () {
 		}
 		if (errorEl) errorEl.hidden = true;
 		if (tbody) tbody.innerHTML = "";
+		if (loader) loader.hidden = false;
 
 		try {
 			const res = await ScoresAPI.fetchScores();
@@ -564,6 +575,8 @@ const OverlayController = (function () {
 				errorEl.textContent = "Scores unavailable offline";
 				errorEl.hidden = false;
 			}
+		} finally {
+			if (loader) loader.hidden = true;
 		}
 	}
 
@@ -804,6 +817,7 @@ const OverlayController = (function () {
 	async function _handleNameEntrySubmit() {
 		const input = document.getElementById("name-entry-input");
 		const errorEl = document.getElementById("name-entry-error");
+		const loader = document.getElementById("name-entry-scores-loader");
 		const name = ((input && input.value) || "")
 			.trim()
 			.toUpperCase()
@@ -821,6 +835,9 @@ const OverlayController = (function () {
 			errorEl.hidden = true;
 			errorEl.textContent = "";
 		}
+
+		// Show arcade loader while we talk to the API
+		if (loader) loader.hidden = false;
 
 		try {
 			const res = await ScoresAPI.fetchScores();
@@ -861,6 +878,8 @@ const OverlayController = (function () {
 			}
 			const skipBtn = document.getElementById("btn-skip-score");
 			if (skipBtn) skipBtn.style.display = "inline-block";
+		} finally {
+			if (loader) loader.hidden = true;
 		}
 	}
 
