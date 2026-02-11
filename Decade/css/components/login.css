@@ -147,3 +147,32 @@
 .login__scores-table th {
 	background: rgba(0, 0, 0, 0.3);
 }
+
+/* Loader shown during fetch */
+.login__loader {
+	position: fixed;
+	inset: 0;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	background: rgba(26, 16, 48, 0.85);
+	z-index: 100;
+	font-family: var(--font-pixel);
+	font-size: var(--font-size-sm);
+	color: var(--color-text-secondary);
+	animation: login-loader-pulse 0.8s ease-in-out infinite;
+}
+
+.login__loader[hidden] {
+	display: none;
+}
+
+@keyframes login-loader-pulse {
+	0%,
+	100% {
+		opacity: 0.6;
+	}
+	50% {
+		opacity: 1;
+	}
+}
