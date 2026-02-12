@@ -143,9 +143,10 @@ const OverlayController = (function () {
 			btnRetryCamera.addEventListener("click", _handleWebcamRetry);
 		}
 
-		// Backdrop click (close overlay in some cases)
+		// Backdrop pointerdown (close overlay when user taps backdrop; use pointerdown not click
+		// so that releasing the virtual controller Escape button over the backdrop doesn't trigger resume)
 		if (_backdrop) {
-			_backdrop.addEventListener("click", _handleBackdropClick);
+			_backdrop.addEventListener("pointerdown", _handleBackdropClick);
 		}
 	}
 
@@ -210,6 +211,7 @@ const OverlayController = (function () {
 				if (phase === StateManager.GamePhase.PLAYING) {
 					LevelManager.pause();
 				} else if (phase === StateManager.GamePhase.PAUSED) {
+					console.log("[OverlayController] _handleResume 123");
 					_handleResume();
 				}
 			}
@@ -781,7 +783,7 @@ const OverlayController = (function () {
 	}
 
 	function _handleBackdropClick() {
-		// Only close on backdrop click for pause menu
+		// Only close on backdrop tap for pause menu
 		if (_activeOverlay === "pause") {
 			_handleResume();
 		}

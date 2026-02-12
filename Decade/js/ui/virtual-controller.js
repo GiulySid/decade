@@ -54,12 +54,18 @@ const VirtualController = (function () {
 			bubbles: true,
 			cancelable: true,
 		});
-		window.dispatchEvent(e);
+		// Dispatch on document so both document listeners (e.g. overlay pause) and window listeners (e.g. Input) receive it
+		document.dispatchEvent(e);
 	}
+
+	// Keys for which we never dispatch keyup (avoids pause menu closing when user releases the button)
+	const _NO_KEYUP_CODES = new Set(["Escape"]);
 
 	function _bindButton(btn) {
 		const code = btn.getAttribute("data-code");
 		if (!code) return;
+
+		const noKeyUp = _NO_KEYUP_CODES.has(code);
 
 		const onDown = (e) => {
 			e.preventDefault();
@@ -75,7 +81,7 @@ const VirtualController = (function () {
 			e.preventDefault();
 			btn.classList.remove("is-pressed");
 			if (typeof Input !== "undefined") Input.setVirtualDown(code, false);
-			_dispatchSynthetic(code, "up");
+			if (!noKeyUp) _dispatchSynthetic(code, "up");
 		};
 
 		btn.addEventListener("pointerdown", onDown);
