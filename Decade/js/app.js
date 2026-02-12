@@ -425,7 +425,7 @@ const App = (function () {
 					if (targetLevel !== null) {
 						e.preventDefault();
 
-						// Mark all previous levels as completed
+						// Mark all previous levels as completed (score 0 so skip doesn't inflate total)
 						for (let i = 1; i < targetLevel; i++) {
 							// Unlock level and memory
 							Storage.unlockLevel(i);
@@ -433,7 +433,7 @@ const App = (function () {
 
 							// Mark as completed if not already
 							if (!StateManager.getCompletedLevels().includes(i)) {
-								StateManager.completeLevel(i, 100); // Default score for debug
+								StateManager.completeLevel(i, 0);
 							}
 						}
 

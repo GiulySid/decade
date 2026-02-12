@@ -569,6 +569,14 @@
 	text-align: center;
 }
 
+.name-entry__your-score {
+	font-size: var(--font-size-lg);
+	color: var(--color-text-accent);
+	margin-bottom: var(--space-3);
+	text-align: center;
+	font-weight: bold;
+}
+
 .name-entry__field {
 	position: relative;
 	display: inline-block;

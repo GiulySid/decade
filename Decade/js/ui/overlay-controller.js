@@ -459,6 +459,7 @@ const OverlayController = (function () {
 	 */
 	function _populateNameEntry(data) {
 		const playingAsEl = document.getElementById("name-entry-playing-as");
+		const yourScoreEl = document.getElementById("name-entry-your-score");
 		const errorEl = document.getElementById("name-entry-error");
 		const skipBtn = document.getElementById("btn-skip-score");
 		const saveBtn = document.getElementById("btn-save-score");
@@ -476,6 +477,10 @@ const OverlayController = (function () {
 			} else {
 				playingAsEl.hidden = true;
 			}
+		}
+		const finalScore = typeof StateManager.getFinalScore === "function" ? StateManager.getFinalScore() : 0;
+		if (yourScoreEl) {
+			yourScoreEl.textContent = "Your score: " + String(finalScore).padStart(4, "0");
 		}
 		if (errorEl) {
 			errorEl.hidden = true;
