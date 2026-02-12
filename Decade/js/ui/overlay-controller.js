@@ -122,10 +122,9 @@ const OverlayController = (function () {
 			btnScoresClose.addEventListener("click", _handleScoresClose);
 		}
 
-		const nameEntryInput = document.getElementById("name-entry-input");
-		if (nameEntryInput) {
-			nameEntryInput.addEventListener("input", _handleNameEntryInput);
-			nameEntryInput.addEventListener("keydown", _handleNameEntryKeydown);
+		const btnSaveScore = document.getElementById("btn-save-score");
+		if (btnSaveScore) {
+			btnSaveScore.addEventListener("click", _handleNameEntrySubmit);
 		}
 
 		const btnSkipScore = document.getElementById("btn-skip-score");
@@ -190,7 +189,7 @@ const OverlayController = (function () {
 				return;
 			}
 
-			// Name entry: Enter to submit
+			// Score overlay (after game complete): Enter to save & continue
 			if (_activeOverlay === "nameEntry" && e.code === "Enter") {
 				e.preventDefault();
 				_handleNameEntrySubmit();
@@ -455,26 +454,37 @@ const OverlayController = (function () {
 	}
 
 	/**
-	 * Populate name entry overlay (including leaderboard)
+	 * Populate score overlay (ranking only; name comes from login sessionStorage)
 	 * @private
 	 */
 	function _populateNameEntry(data) {
-		const input = document.getElementById("name-entry-input");
+		const playingAsEl = document.getElementById("name-entry-playing-as");
 		const errorEl = document.getElementById("name-entry-error");
 		const skipBtn = document.getElementById("btn-skip-score");
+		const saveBtn = document.getElementById("btn-save-score");
 		const tbody = document.getElementById("name-entry-scores-body");
-		if (input) {
-			input.value = "";
-			input.maxLength = 10;
-			setTimeout(() => input.focus(), 100);
+		const name = (typeof sessionStorage !== "undefined" && sessionStorage.getItem("decade_player_name")) || "";
+		const displayName = String(name)
+			.trim()
+			.toUpperCase()
+			.replace(/[^A-Z0-9_]/g, "")
+			.slice(0, 10);
+		if (playingAsEl) {
+			if (displayName.length >= 3) {
+				playingAsEl.textContent = "Playing as: " + displayName;
+				playingAsEl.hidden = false;
+			} else {
+				playingAsEl.hidden = true;
+			}
 		}
 		if (errorEl) {
 			errorEl.hidden = true;
 			errorEl.textContent = "";
 		}
 		if (skipBtn) skipBtn.style.display = "none";
+		if (saveBtn) saveBtn.style.display = "";
 		if (tbody) tbody.innerHTML = "";
-		_renderScoresTable(tbody, null);
+		_renderScoresTable(tbody, displayName.length >= 3 ? displayName : null);
 	}
 
 	/**
@@ -789,58 +799,21 @@ const OverlayController = (function () {
 		}
 	}
 
-	function _handleNameEntryInput(e) {
-		const input = e.target;
-		let val = input.value.toUpperCase().replace(/[^A-Z0-9_]/g, "");
-		if (val.length > 10) val = val.slice(0, 10);
-		input.value = val;
-	}
-
-	function _handleNameEntryKeydown(e) {
-		if (e.code === "Enter") {
-			e.preventDefault();
-			_handleNameEntrySubmit();
-		}
-	}
-
 	async function _handleNameEntrySubmit() {
-		const input = document.getElementById("name-entry-input");
 		const errorEl = document.getElementById("name-entry-error");
-		const name = ((input && input.value) || "")
+		const saveBtn = document.getElementById("btn-save-score");
+		const skipBtn = document.getElementById("btn-skip-score");
+		const rawName = (typeof sessionStorage !== "undefined" && sessionStorage.getItem("decade_player_name")) || "";
+		const name = String(rawName)
 			.trim()
 			.toUpperCase()
-			.replace(/[^A-Z0-9_]/g, "");
-
-		if (name.length < 3) {
-			if (errorEl) {
-				errorEl.textContent = "Name must be 3–10 chars (A–Z, 0–9, _)";
-				errorEl.hidden = false;
-			}
-			return;
-		}
+			.replace(/[^A-Z0-9_]/g, "")
+			.slice(0, 10);
+		const finalName = name.length >= 3 ? name : "ANON";
 
 		if (errorEl) {
 			errorEl.hidden = true;
 			errorEl.textContent = "";
-		}
-
-		try {
-			const res = await ScoresAPI.fetchScores();
-			const scores = (res && res.scores) || [];
-			const exists = scores.some((e) => String(e.name || "").toUpperCase() === name);
-			if (exists) {
-				if (errorEl) {
-					errorEl.textContent = "Name already taken. Choose another.";
-					errorEl.hidden = false;
-				}
-				return;
-			}
-		} catch (_) {
-			if (errorEl) {
-				errorEl.textContent = "Scores unavailable offline";
-				errorEl.hidden = false;
-			}
-			return;
 		}
 
 		const score = typeof StateManager.getFinalScore === "function" ? StateManager.getFinalScore() : 0;
@@ -852,17 +825,22 @@ const OverlayController = (function () {
 			typeof StateManager.getUnlockedBonuses === "function" ? StateManager.getUnlockedBonuses() : [];
 
 		try {
-			await ScoresAPI.submitScore({ name, score, collectibles, bonusUnlocked });
-			_lastSubmittedName = name;
+			await ScoresAPI.submitScore({
+				name: finalName,
+				score,
+				collectibles,
+				bonusUnlocked,
+			});
+			_lastSubmittedName = finalName;
 			_pendingWebcamAfterScores = true;
-			show("scores", { fromGameEnd: true, highlightName: name });
+			show("scores", { fromGameEnd: true, highlightName: finalName });
 		} catch (err) {
 			if (errorEl) {
 				errorEl.textContent = err && err.message ? err.message : "Scores unavailable offline";
 				errorEl.hidden = false;
 			}
-			const skipBtn = document.getElementById("btn-skip-score");
 			if (skipBtn) skipBtn.style.display = "inline-block";
+			if (saveBtn) saveBtn.style.display = "none";
 		}
 	}
 

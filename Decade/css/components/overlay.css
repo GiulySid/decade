@@ -562,6 +562,13 @@
 	margin-bottom: var(--space-3);
 }
 
+.name-entry__playing-as {
+	font-size: var(--font-size-sm);
+	color: var(--color-text-secondary);
+	margin-bottom: var(--space-2);
+	text-align: center;
+}
+
 .name-entry__field {
 	position: relative;
 	display: inline-block;
@@ -608,7 +615,7 @@
 }
 
 .scores-table-wrap--compact {
-	max-height: 180px;
+	max-height: 140px !important;
 }
 
 .overlay__error {

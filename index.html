@@ -203,7 +203,7 @@
 				</div>
 			</div>
 
-			<!-- OVERLAY: Name Entry (arcade style, after game complete) -->
+			<!-- OVERLAY: Score ranking after game complete (name from login) -->
 			<div
 				id="overlay-name-entry"
 				class="overlay overlay--name-entry overlay--name-entry-with-scores"
@@ -211,20 +211,7 @@
 				aria-modal="true"
 			>
 				<div class="overlay__content overlay__content--name-entry">
-					<h2 class="overlay__title">ENTER YOUR NAME</h2>
-					<!-- <p class="overlay__hint">3–10 chars · A–Z, 0–9, _ · No duplicates</p> -->
-					<div class="name-entry__field">
-						<input
-							type="text"
-							id="name-entry-input"
-							class="name-entry__input"
-							maxlength="10"
-							placeholder="___"
-							autocomplete="off"
-							autocapitalize="characters"
-							spellcheck="false"
-						/>
-					</div>
+					<p class="name-entry__playing-as" id="name-entry-playing-as" hidden></p>
 					<div class="name-entry__scores">
 						<h3 class="name-entry__scores-title">HIGH SCORES</h3>
 						<div class="scores-table-wrap scores-table-wrap--compact">
@@ -242,6 +229,9 @@
 						</div>
 					</div>
 					<p class="overlay__error" id="name-entry-error" hidden>Scores unavailable offline</p>
+					<button type="button" class="overlay__button overlay__button--primary" id="btn-save-score">
+						SAVE SCORE & CONTINUE
+					</button>
 					<button type="button" class="overlay__button" id="btn-skip-score" style="display: none">
 						CONTINUE WITHOUT SAVING
 					</button>
