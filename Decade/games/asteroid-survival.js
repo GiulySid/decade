@@ -85,7 +85,6 @@
 		const _boostTrails = [];
 
 		let _moonImg = null;
-		let _shipImg = null;
 		let _bgImg = null;
 
 		let _lives = START_LIVES;
@@ -112,8 +111,6 @@
 			console.log("[AsteroidSurvival] Initializing...");
 			_moonImg = new Image();
 			_moonImg.src = "Decade/assets/sprites/asteroid/asteroid_pink_moon.png";
-			_shipImg = new Image();
-			_shipImg.src = "Decade/assets/sprites/asteroid/asteroid_car.png";
 			_bgImg = new Image();
 			_bgImg.src = "Decade/assets/sprites/asteroid/asteroid_background.png";
 			_reset();
@@ -933,24 +930,17 @@
 			_ctx.fill();
 			_ctx.restore();
 
-			// Ship sprite (car)
-			const w = 40;
-			const h = 60;
-			if (_shipImg && _shipImg.complete && _shipImg.naturalWidth > 0) {
-				_ctx.drawImage(_shipImg, x - w / 2, y - h / 2, w, h);
-			} else {
-				// Fallback: original triangle ship
-				_ctx.fillStyle = COLORS.ship;
-				_ctx.beginPath();
-				_ctx.moveTo(x, y - 14);
-				_ctx.lineTo(x - 10, y + 10);
-				_ctx.lineTo(x + 10, y + 10);
-				_ctx.closePath();
-				_ctx.fill();
+			// Drawn spaceship (triangle + cockpit)
+			_ctx.fillStyle = COLORS.ship;
+			_ctx.beginPath();
+			_ctx.moveTo(x, y - 14);
+			_ctx.lineTo(x - 10, y + 10);
+			_ctx.lineTo(x + 10, y + 10);
+			_ctx.closePath();
+			_ctx.fill();
 
-				_ctx.fillStyle = COLORS.shipAccent;
-				_ctx.fillRect(x - 2, y - 6, 4, 8);
-			}
+			_ctx.fillStyle = COLORS.shipAccent;
+			_ctx.fillRect(x - 2, y - 6, 4, 8);
 
 			// Boost effect
 			const boosting = performance.now() < _boostUntil;
