@@ -895,12 +895,22 @@ const OverlayController = (function () {
 		const video = document.getElementById("webcamVideo");
 		const statusEl = document.getElementById("webcamStatus");
 		const retryBtn = document.getElementById("btn-retry-camera");
+		const fallback = document.getElementById("webcam-frame-fallback");
+		const cardBody = document.getElementById("webcam-card-body");
 		if (retryBtn) retryBtn.style.display = "none";
-		if (statusEl) statusEl.textContent = "";
+		if (fallback) {
+			fallback.hidden = true;
+			fallback.style.display = "none";
+		}
+		if (statusEl) {
+			statusEl.textContent = "";
+			statusEl.hidden = true;
+		}
 		if (video) {
 			video.srcObject = null;
 			video.style.display = "none";
 		}
+		if (cardBody) cardBody.hidden = false;
 		_requestWebcam();
 	}
 
@@ -911,11 +921,24 @@ const OverlayController = (function () {
 
 		_stopWebcam();
 
+		const cardBody = document.getElementById("webcam-card-body");
+
 		if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-			if (statusEl) statusEl.textContent = "Camera not supported in this browser.";
+			if (statusEl) {
+				statusEl.textContent = "Camera not supported in this browser.";
+				statusEl.hidden = false;
+			}
+			if (cardBody) cardBody.hidden = false;
 			if (retryBtn) retryBtn.style.display = "none";
+			const fallbackEl = document.getElementById("webcam-frame-fallback");
+			if (fallbackEl) {
+				fallbackEl.hidden = true;
+				fallbackEl.style.display = "none";
+			}
 			return;
 		}
+
+		const fallback = document.getElementById("webcam-frame-fallback");
 
 		navigator.mediaDevices
 			.getUserMedia({ video: { facingMode: "user" }, audio: false })
@@ -925,8 +948,16 @@ const OverlayController = (function () {
 					video.srcObject = stream;
 					video.style.display = "block";
 				}
-				if (statusEl) statusEl.textContent = "";
+				if (statusEl) {
+					statusEl.textContent = "";
+					statusEl.hidden = true;
+				}
+				if (cardBody) cardBody.hidden = true;
 				if (retryBtn) retryBtn.style.display = "none";
+				if (fallback) {
+					fallback.hidden = true;
+					fallback.style.display = "none";
+				}
 			})
 			.catch((err) => {
 				_webcamStream = null;
@@ -935,9 +966,15 @@ const OverlayController = (function () {
 						err.name === "NotAllowedError"
 							? "Camera access was denied. You can still play again."
 							: "Could not access camera. You can still play again.";
+					statusEl.hidden = false;
 				}
+				if (cardBody) cardBody.hidden = false;
 				if (video) video.style.display = "none";
 				if (retryBtn) retryBtn.style.display = "inline-block";
+				if (fallback) {
+					fallback.hidden = false;
+					fallback.style.display = "flex";
+				}
 			});
 	}
 

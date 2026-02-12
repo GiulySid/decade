@@ -281,26 +281,25 @@
 				aria-labelledby="webcam-finale-title"
 			>
 				<div class="overlay__content webcam-card">
-					<h2 class="overlay__title" id="webcam-finale-title">After 10 years…</h2>
-					<p class="webcam-subtitle">This is the present.</p>
 					<div class="webcam-frame">
 						<video id="webcamVideo" autoplay playsinline muted></video>
 						<div class="webcam-scanlines" aria-hidden="true"></div>
+						<div class="webcam-frame-overlay">
+							<button type="button" class="overlay__button overlay__button--primary" id="btn-play-again">
+								PLAY AGAIN
+							</button>
+						</div>
+						<div class="webcam-frame-fallback" id="webcam-frame-fallback" hidden>
+							<button type="button" class="overlay__button overlay__button--primary" id="btn-retry-camera">
+								TRY CAMERA AGAIN
+							</button>
+						</div>
 					</div>
-					<div class="webcam-actions">
-						<button type="button" class="overlay__button overlay__button--primary" id="btn-play-again">
-							PLAY AGAIN
-						</button>
-						<button
-							type="button"
-							class="overlay__button webcam-retry-btn"
-							id="btn-retry-camera"
-							style="display: none"
-						>
-							TRY CAMERA AGAIN
-						</button>
+					<div class="webcam-card__body" id="webcam-card-body">
+						<h2 class="overlay__title" id="webcam-finale-title">After 10 years…</h2>
+						<p class="webcam-subtitle">This is the present.</p>
+						<p class="webcam-note" id="webcamStatus" hidden></p>
 					</div>
-					<p class="webcam-note" id="webcamStatus"></p>
 				</div>
 			</div>
 

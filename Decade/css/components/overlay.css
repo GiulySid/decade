@@ -355,6 +355,15 @@
 .overlay--webcam .webcam-card {
 	min-width: min(90vw, 560px);
 	max-width: min(90vw, 560px);
+	display: flex;
+	flex-direction: column;
+}
+
+.webcam-card__body {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	text-align: center;
 }
 
 .webcam-subtitle {
@@ -400,6 +409,40 @@
 	opacity: 0.5;
 }
 
+/* PLAY AGAIN overlaid on bottom of video */
+.webcam-frame-overlay {
+	position: absolute;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	z-index: 2;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	padding: var(--space-3);
+	background: linear-gradient(to top, rgba(0, 0, 0, 0.7), transparent);
+	pointer-events: none;
+}
+
+.webcam-frame-overlay .overlay__button {
+	pointer-events: auto;
+}
+
+/* TRY CAMERA AGAIN replaces video when shown (same area, centered) */
+.webcam-frame-fallback {
+	position: absolute;
+	inset: 0;
+	display: none;
+	align-items: center;
+	justify-content: center;
+	background: var(--color-bg-primary);
+	z-index: 1;
+}
+
+.webcam-frame-fallback[hidden] {
+	display: none !important;
+}
+
 .webcam-actions {
 	display: flex;
 	flex-wrap: wrap;
@@ -421,6 +464,88 @@
 
 .webcam-retry-btn {
 	margin-left: var(--space-2);
+}
+
+/* Webcam overlay: mobile = horizontal layout (wider, less high) */
+@media screen and (max-width: 899px), (pointer: coarse) {
+	.overlay--webcam.overlay {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		max-height: 100vh;
+		max-height: 100dvh;
+		padding: 10px;
+		padding-bottom: calc(10px + env(safe-area-inset-bottom));
+		box-sizing: border-box;
+	}
+
+	.overlay--webcam .webcam-card {
+		flex-direction: row;
+		align-items: center;
+		gap: var(--space-4);
+		min-width: 0;
+		width: min(96vw, 720px);
+		max-width: min(96vw, 720px);
+		max-height: min(88vh, 88dvh, 380px);
+		padding: var(--space-3);
+		padding-bottom: calc(var(--space-3) + env(safe-area-inset-bottom));
+		overflow: hidden;
+	}
+
+	.overlay--webcam .webcam-frame {
+		flex: 1 1 58%;
+		min-width: 0;
+		width: auto;
+		max-width: none;
+		height: auto;
+		aspect-ratio: 4 / 3;
+		margin: 0;
+		min-height: 0;
+	}
+
+	/* When webcam works, body is hidden: frame fills card and fits height so PLAY AGAIN overlay stays visible */
+	.overlay--webcam .webcam-card:has(.webcam-card__body[hidden]) {
+		height: min(88vh, 88dvh, 380px);
+	}
+
+	.overlay--webcam .webcam-card:has(.webcam-card__body[hidden]) .webcam-frame {
+		flex: 1 1 100%;
+		height: 100%;
+		max-height: 100%;
+		aspect-ratio: auto;
+		min-height: 0;
+	}
+
+	.overlay--webcam .webcam-card__body {
+		flex: 0 1 42%;
+		min-width: 0;
+		align-items: center;
+		text-align: center;
+		justify-content: center;
+		gap: 0;
+	}
+
+	.overlay--webcam .webcam-card__body .overlay__title {
+		font-size: var(--font-size-lg);
+		margin-bottom: var(--space-1);
+	}
+
+	.overlay--webcam .webcam-subtitle {
+		margin-bottom: var(--space-3);
+		font-size: var(--font-size-xs);
+	}
+
+	.overlay--webcam .webcam-actions {
+		flex-wrap: wrap;
+		justify-content: center;
+		margin-top: 0;
+		gap: var(--space-2);
+	}
+
+	.overlay--webcam .webcam-note {
+		margin-top: var(--space-2);
+		font-size: 0.7rem;
+	}
 }
 
 /* =========================================
