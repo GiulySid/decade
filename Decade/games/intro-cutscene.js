@@ -296,8 +296,8 @@
 			else if (_keys.ArrowRight) _stepChar("simone", 1, now);
 
 			// Giulia: A/D (keyboard) and virtual controller face buttons (Z/X/Space)
-			if (_keys.KeyA || _keys.KeyZ) _stepChar("giulia", -1, now);
-			else if (_keys.KeyD || _keys.KeyX || _keys.Space) _stepChar("giulia", 1, now);
+			if (_keys.KeyA) _stepChar("giulia", -1, now);
+			else if (_keys.KeyD) _stepChar("giulia", 1, now);
 		}
 
 		function _checkMeeting(now) {
@@ -545,13 +545,10 @@
 
 					// Giulia horizontal (keyboard + face buttons)
 					case "KeyA":
-					case "KeyZ":
 						_stepChar("giulia", -1, now);
 						e.preventDefault();
 						break;
 					case "KeyD":
-					case "KeyX":
-					case "Space":
 						_stepChar("giulia", 1, now);
 						e.preventDefault();
 						break;
