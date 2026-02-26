@@ -151,9 +151,15 @@
 				}
 			}
 
-			// Ensure spawn tiles are walkable and pellet-free
-			_pellets[player.y][player.x] = false;
-			_pellets[ghost.y][ghost.x] = false;
+			// Ensure spawn tiles are walkable and pellet-free (keep _pelletCount in sync)
+			if (_pellets[player.y][player.x]) {
+				_pellets[player.y][player.x] = false;
+				_pelletCount--;
+			}
+			if (_pellets[ghost.y][ghost.x]) {
+				_pellets[ghost.y][ghost.x] = false;
+				_pelletCount--;
+			}
 		}
 
 		function _resetRound() {

@@ -361,7 +361,9 @@ const App = (function () {
 			const playing = StateManager.getPhase() === "playing" || StateManager.getPhase() === "title";
 			if (
 				playing &&
-				["Space", "ArrowLeft", "ArrowRight", "ArrowUp", "ArrowDown", "Minus", "NumpadSubtract"].includes(e.code)
+				["Space", "ArrowLeft", "ArrowRight", "ArrowUp", "ArrowDown", "Minus", "NumpadSubtract", "Slash"].includes(
+					e.code
+				)
 			) {
 				e.preventDefault();
 			}
@@ -369,7 +371,7 @@ const App = (function () {
 			// Collectible debug shortcut (minus key) while gameplay is active
 			if (
 				StateManager.getPhase() === StateManager.GamePhase.PLAYING &&
-				(e.code === "Minus" || e.code === "NumpadSubtract")
+				(e.code === "Minus" || e.code === "NumpadSubtract" || e.code === "Slash")
 			) {
 				const lvl = StateManager.getCurrentLevel();
 				// Bonus levels have no collectibles
