@@ -6,8 +6,12 @@
 const ScoresAPI = (function () {
 	"use strict";
 
-	// Use same origin (works when served by node server) or override via window.DECADE_SCORES_API
-	const BASE = "https://decadeserver.onrender.com";
+	// Same origin when served over HTTP(S) so traffic is encrypted with HTTPS; override via window.DECADE_SCORES_API
+	const o = typeof window !== "undefined" && window.location && window.location.origin;
+	const BASE =
+		(typeof window !== "undefined" && window.DECADE_SCORES_API) ||
+		(o && (o.startsWith("http://") || o.startsWith("https://")) ? o : null) ||
+		"https://decadeserver.onrender.com";
 
 	/**
 	 * Fetch leaderboard from backend

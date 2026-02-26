@@ -1,17 +1,41 @@
 /**
  * Decade - Single lightweight server
- * Serves the game + scores API from one folder. No extra deps.
+ * Serves the game + scores API. Optional HTTPS for encrypted communication.
+ * Login password is checked on the server (set LOGIN_PASSWORD env).
  * Run: node server.js  →  open http://localhost:3000
+ * HTTPS: set SSL_KEY_PATH and SSL_CERT_PATH (or place key.pem/cert.pem in ./cert/)
  */
 
 const http = require("http");
 const fs = require("fs");
 const path = require("path");
+const crypto = require("crypto");
 
 const PORT = process.env.PORT || 3000;
 const ROOT = __dirname;
 const SCORES_PATH = process.env.SCORES_PATH || path.join(ROOT, "Decade", "data", "scores.json");
 const MAX_ENTRIES = 100;
+const SALT = process.env.LOGIN_SALT || "decade-login-salt-v1";
+let loginPasswordHash = null;
+
+function initLoginHash() {
+	const pwd = process.env.LOGIN_PASSWORD;
+	if (!pwd || pwd.length === 0) {
+		console.warn(
+			"[Decade] LOGIN_PASSWORD not set: login will reject all passwords. Set LOGIN_PASSWORD for production."
+		);
+		loginPasswordHash = "";
+		return;
+	}
+	loginPasswordHash = crypto.scryptSync(pwd, SALT, 64).toString("hex");
+}
+
+function checkPassword(plain) {
+	if (!loginPasswordHash) return false;
+	const h = crypto.scryptSync(plain, SALT, 64);
+	const buf = Buffer.from(loginPasswordHash, "hex");
+	return buf.length === h.length && crypto.timingSafeEqual(buf, h);
+}
 
 const MIMES = {
 	".html": "text/html",
@@ -90,13 +114,43 @@ function serveFile(filePath, res) {
 	});
 }
 
-const server = http.createServer(async (req, res) => {
+async function createApp(req, res) {
 	const url = req.url.split("?")[0];
 	// CORS
-	//res.setHeader("Access-Control-Allow-Origin", "https://decadex.it"); // oppure "https://www.decadex.it"
 	res.setHeader("Access-Control-Allow-Methods", "GET,POST,PUT,OPTIONS");
 	res.setHeader("Access-Control-Allow-Headers", "Content-Type");
-	res.setHeader("Access-Control-Allow-Origin", "*");
+	res.setHeader("Access-Control-Allow-Origin", req.headers.origin || "*");
+
+	// Auth: password check (backend-only)
+	if (url === "/auth/login" || url === "/auth/login/") {
+		res.setHeader("Content-Type", "application/json");
+		if (req.method === "OPTIONS") {
+			res.writeHead(204);
+			res.end();
+			return;
+		}
+		if (req.method !== "POST") {
+			res.writeHead(405);
+			res.end(JSON.stringify({ error: "Method not allowed" }));
+			return;
+		}
+		try {
+			const body = await parseBody(req);
+			const password = typeof body.password === "string" ? body.password : "";
+			if (checkPassword(password)) {
+				res.writeHead(200);
+				res.end(JSON.stringify({ ok: true }));
+			} else {
+				res.writeHead(401);
+				res.end(JSON.stringify({ error: "Wrong password" }));
+			}
+		} catch {
+			res.writeHead(400);
+			res.end(JSON.stringify({ error: "Bad request" }));
+		}
+		return;
+	}
+
 	// Scores API
 	if (url === "/scores" || url === "/scores/") {
 		res.setHeader("Content-Type", "application/json");
@@ -221,11 +275,33 @@ const server = http.createServer(async (req, res) => {
 	}
 	res.writeHead(404);
 	res.end("Not found");
-});
+}
 
+initLoginHash();
 ensureScoresFile();
 
+// HTTPS (encrypted) if certs available; otherwise HTTP (use reverse proxy for TLS in production)
+function getHttpsOptions() {
+	const keyPath = process.env.SSL_KEY_PATH || path.join(ROOT, "cert", "key.pem");
+	const certPath = process.env.SSL_CERT_PATH || path.join(ROOT, "cert", "cert.pem");
+	try {
+		if (fs.existsSync(keyPath) && fs.existsSync(certPath)) {
+			return { key: fs.readFileSync(keyPath), cert: fs.readFileSync(certPath) };
+		}
+	} catch (_) {}
+	return null;
+}
+
+const httpsOptions = getHttpsOptions();
+const server = httpsOptions ? https.createServer(httpsOptions, createApp) : http.createServer(createApp);
+
 const PORTS = [PORT, 3001, 8080, 8081].filter((p, i, a) => a.indexOf(p) === i);
+const protocol = httpsOptions ? "https" : "http";
+if (!httpsOptions) {
+	console.warn(
+		"[Decade] No SSL certs found. Use HTTPS in production (set SSL_KEY_PATH, SSL_CERT_PATH or add cert/key.pem in ./cert/)"
+	);
+}
 
 function tryListen(idx) {
 	const p = PORTS[idx] ?? PORTS[0];
@@ -240,8 +316,8 @@ function tryListen(idx) {
 	server.once("error", onError);
 	server.listen(p, () => {
 		server.removeListener("error", onError);
-		console.log(`[Decade] Game + scores at http://localhost:${p}`);
-		console.log(`         Open this URL to play. Scores saved in Decade/data/scores.json`);
+		console.log(`[Decade] Game + scores at ${protocol}://localhost:${p}`);
+		console.log(`         Set LOGIN_PASSWORD for backend password check. Scores in Decade/data/scores.json`);
 	});
 }
 tryListen(0);

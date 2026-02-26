@@ -77,15 +77,17 @@
 				const error = document.getElementById("login-error");
 				const scoresBody = document.getElementById("login-scores-body");
 				const loader = document.getElementById("login-loader");
-				const PASSWORD = "password";
-				const API = "https://decadeserver.onrender.com" + "/scores";
+				// Same origin when served over HTTP(S) so traffic is encrypted with HTTPS
+				const o = typeof window !== "undefined" && window.location && window.location.origin;
+				const API_BASE =
+					o && (o.startsWith("http://") || o.startsWith("https://")) ? o : "https://decadeserver.onrender.com";
 
 				async function loadLeaderboard() {
 					if (!scoresBody) return;
 					scoresBody.innerHTML = "";
 					if (loader) loader.hidden = false;
 					try {
-						const res = await fetch(API);
+						const res = await fetch(API_BASE + "/scores");
 						const data = await res.json();
 						const scores = (data && data.scores) || [];
 						scores.slice(0, 20).forEach((entry, idx) => {
@@ -132,16 +134,31 @@
 					this.value = v;
 				});
 
-				loginForm.addEventListener("submit", function (e) {
+				loginForm.addEventListener("submit", async function (e) {
 					e.preventDefault();
 					error.hidden = true;
-					if (passwordInput.value === PASSWORD) {
-						showNameForm();
-					} else {
+					if (loader) loader.hidden = false;
+					try {
+						const res = await fetch(API_BASE + "/auth/login", {
+							method: "POST",
+							headers: { "Content-Type": "application/json" },
+							body: JSON.stringify({ password: passwordInput.value }),
+						});
+						const data = await res.json().catch(() => ({}));
+						if (res.ok && data.ok) {
+							showNameForm();
+						} else {
+							error.textContent = data.error || "WRONG PASSWORD";
+							error.hidden = false;
+							passwordInput.value = "";
+							passwordInput.focus();
+						}
+					} catch (_) {
+						error.textContent = "Network error. Try again.";
 						error.hidden = false;
-						error.textContent = "WRONG PASSWORD";
-						passwordInput.value = "";
 						passwordInput.focus();
+					} finally {
+						if (loader) loader.hidden = true;
 					}
 				});
 
@@ -159,7 +176,7 @@
 					}
 					if (loader) loader.hidden = false;
 					try {
-						const res = await fetch(API);
+						const res = await fetch(API_BASE + "/scores");
 						const data = await res.json();
 						const scores = (data && data.scores) || [];
 						const exists = scores.some(function (e) {
