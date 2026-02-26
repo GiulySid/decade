@@ -586,6 +586,7 @@ const OverlayController = (function () {
 
 	/**
 	 * Populate memory reveal overlay
+	 * When data.evolution is present, show Pokémon-style evolution animation inside reveal__media
 	 * @private
 	 */
 	function _populateMemoryReveal(data) {
@@ -601,12 +602,120 @@ const OverlayController = (function () {
 			messageEl.textContent = data.memory.text || "A special memory...";
 		}
 
-		if (mediaEl && data.memory && data.memory.image) {
-			mediaEl.innerHTML = `<img src="${data.memory.image}" alt="Memory from ${data.year}">`;
-		} else if (mediaEl) {
-			// Placeholder
-			mediaEl.innerHTML = '<div style="color:#666;font-size:10px;">Memory Image</div>';
+		if (!mediaEl) return;
+
+		// Evolution: pulse (from) → flash + alternate visibility → replace → pulse (to). No evolution for bonus levels.
+		if (data.evolution && data.evolution.fromLevel != null && data.evolution.toLevel != null) {
+			const fromCfg = LevelConfig.getSpriteForLevel(data.evolution.fromLevel);
+			const toCfg = LevelConfig.getSpriteForLevel(data.evolution.toLevel);
+			if (fromCfg && toCfg) {
+				mediaEl.innerHTML = "";
+				const stage = document.createElement("div");
+				stage.className = "evolution__stage";
+				const imgFrom = document.createElement("img");
+				imgFrom.className = "evolution__sprite evolution__sprite--from";
+				imgFrom.alt = `Year ${fromCfg.year || data.evolution.fromLevel}`;
+				const imgTo = document.createElement("img");
+				imgTo.className = "evolution__sprite evolution__sprite--to";
+				imgTo.alt = `Year ${toCfg.year || data.evolution.toLevel}`;
+				const flash = document.createElement("div");
+				flash.className = "evolution__flash";
+				stage.appendChild(imgFrom);
+				stage.appendChild(imgTo);
+				stage.appendChild(flash);
+				mediaEl.appendChild(stage);
+				imgFrom.src = fromCfg.src;
+				imgTo.src = toCfg.src;
+				// Initial state: from visible at scale 1, to hidden
+				imgFrom.style.opacity = "1";
+				imgFrom.style.transform = "scale(1)";
+				imgFrom.style.transition = "transform 0.2s ease-out";
+				imgTo.style.opacity = "0";
+				imgTo.style.transform = "scale(1)";
+				imgTo.style.transition = "transform 0.2s ease-out, opacity 0.15s ease";
+				imgTo.style.visibility = "hidden";
+				flash.style.transition = "opacity 0.08s ease";
+				flash.style.opacity = "0";
+
+				function pulseScale(el, fromS, peakS, toS, durationMs) {
+					return new Promise((resolve) => {
+						const half = durationMs / 2;
+						el.style.transition = `transform ${half}ms ease-out`;
+						el.style.transform = `scale(${peakS})`;
+						setTimeout(() => {
+							el.style.transform = `scale(${toS})`;
+							setTimeout(resolve, half);
+						}, half);
+					});
+				}
+
+				async function runEvolutionAnimation() {
+					// 1) Pulse "from" sprite: scale 1 → 1.15 → 1, repeat 2–3 times, slightly faster each time
+					const fromPulseDurations = [400, 320, 280];
+					for (let i = 0; i < fromPulseDurations.length; i++) {
+						await pulseScale(imgFrom, 1, 1.15, 1, fromPulseDurations[i]);
+					}
+					// 2) White flash: opacity 0 → 1 → 0; during flash alternate visibility slowly
+					const alternateInterval = 700; // slow alternation (ms between each sprite swap)
+					const flashDuration = 3200; // total flash phase so we get several slow alternations
+					flash.style.opacity = "1";
+					let showFrom = true; // start with "from" visible, first tick will show "to"
+					const alternateId = setInterval(() => {
+						showFrom = !showFrom;
+						imgFrom.style.visibility = showFrom ? "visible" : "hidden";
+						imgFrom.style.opacity = showFrom ? "1" : "0";
+						imgTo.style.visibility = showFrom ? "hidden" : "visible";
+						imgTo.style.opacity = showFrom ? "0" : "1";
+					}, alternateInterval);
+					await new Promise((r) => setTimeout(r, 400)); // hold full flash
+					flash.style.opacity = "0";
+					await new Promise((r) => setTimeout(r, flashDuration - 400)); // fade out and keep alternating
+					clearInterval(alternateId);
+					// 3) Replace: hide old, show new
+					imgFrom.style.opacity = "0";
+					imgFrom.style.visibility = "hidden";
+					imgTo.style.opacity = "1";
+					imgTo.style.visibility = "visible";
+					imgTo.style.transform = "scale(1)";
+					await new Promise((r) => setTimeout(r, 80));
+					// 3b) Flash again right before "to" pulse (0 → 1 → 0)
+					flash.style.opacity = "1";
+					await new Promise((r) => setTimeout(r, 400));
+					flash.style.opacity = "0";
+					await new Promise((r) => setTimeout(r, 120));
+					// 4) Pulse "to" sprite: scale 1 → 1.2 → 1, repeat 2 times
+					for (let i = 0; i < 2; i++) {
+						await pulseScale(imgTo, 1, 1.2, 1, 350);
+					}
+					// 5) Sparkles after animation ended
+					const sparkleCount = 12;
+					const radiusPct = 32; // % from center
+					for (let i = 0; i < sparkleCount; i++) {
+						const sparkle = document.createElement("span");
+						sparkle.className = "evolution__sparkle";
+						const angle = (i / sparkleCount) * Math.PI * 2 - Math.PI / 2;
+						const x = 50 + radiusPct * Math.cos(angle);
+						const y = 50 + radiusPct * Math.sin(angle);
+						sparkle.style.left = x + "%";
+						sparkle.style.top = y + "%";
+						sparkle.style.animationDelay = i * 80 + "ms";
+						stage.appendChild(sparkle);
+					}
+				}
+
+				function startEvolution() {
+					runEvolutionAnimation();
+				}
+				if (imgFrom.complete && imgFrom.naturalWidth) {
+					startEvolution();
+				} else {
+					imgFrom.onload = startEvolution;
+					imgFrom.onerror = startEvolution;
+				}
+				return;
+			}
 		}
+		mediaEl.innerHTML = "";
 	}
 
 	// =========================================

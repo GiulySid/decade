@@ -319,6 +319,87 @@
 }
 
 /* =========================================
+   EVOLUTION (Pokémon-style) inside reveal__media
+   ========================================= */
+
+.reveal__media {
+	position: relative;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	min-height: 140px;
+}
+
+.reveal__media .evolution__stage {
+	position: relative;
+	width: min(90vmin, 200px);
+	height: min(90vmin, 200px);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.reveal__media .evolution__sprite {
+	position: absolute;
+	width: 100px;
+	height: 100px;
+	object-fit: contain;
+	transition: opacity 0.4s ease, transform 0.4s ease;
+}
+
+.reveal__media .evolution__sprite--from {
+	z-index: 1;
+}
+
+.reveal__media .evolution__sprite--to {
+	z-index: 2;
+	/* Initial state; JS animation controls opacity/transform */
+	opacity: 0;
+	visibility: hidden;
+}
+
+.reveal__media .evolution__flash {
+	position: absolute;
+	inset: -30%;
+	background: radial-gradient(circle at center, rgba(255, 255, 255, 0.95) 0%, transparent 70%);
+	opacity: 0;
+	pointer-events: none;
+	z-index: 3;
+}
+
+.reveal__media .evolution__sparkle {
+	position: absolute;
+	width: 6px;
+	height: 6px;
+	background: #fff;
+	border-radius: 50%;
+	box-shadow: 0 0 8px rgba(255, 255, 255, 0.9);
+	pointer-events: none;
+	z-index: 4;
+	opacity: 0;
+	animation: evolution-sparkle 1.2s ease-out forwards;
+}
+
+@keyframes evolution-sparkle {
+	0% {
+		opacity: 0;
+		transform: translate(-50%, -50%) scale(0);
+	}
+	40% {
+		opacity: 1;
+		transform: translate(-50%, -50%) scale(1.2);
+	}
+	70% {
+		opacity: 0.95;
+		transform: translate(-50%, -50%) scale(1);
+	}
+	100% {
+		opacity: 0.85;
+		transform: translate(-50%, -50%) scale(1);
+	}
+}
+
+/* =========================================
    MOBILE: MEMORY REVEAL FIT
    Prevent cut-off + keep NEXT CHAPTER reachable
    ========================================= */

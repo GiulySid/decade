@@ -268,11 +268,22 @@ const LevelManager = (function () {
 
 		StateManager.setPhase(StateManager.GamePhase.MEMORY_REVEAL);
 
-		OverlayController.showMemoryReveal({
+		const payload = {
 			level: levelNum,
 			year: config.year,
 			memory: config.memory,
-		});
+		};
+		// Evolution only when moving from one main-level year to the next (e.g. 2016 → 2017). No evolution for bonus levels.
+		if (levelNum >= 1 && levelNum <= 9) {
+			const toConfig = LevelConfig.getLevel(levelNum + 1);
+			payload.evolution = {
+				fromLevel: levelNum,
+				toLevel: levelNum + 1,
+				fromYear: config.year,
+				toYear: toConfig ? toConfig.year : null,
+			};
+		}
+		OverlayController.showMemoryReveal(payload);
 
 		EventBus.emit(EventBus.Events.REVEAL_SHOW, { level: levelNum });
 	}
