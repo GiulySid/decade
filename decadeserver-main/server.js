@@ -15,8 +15,12 @@ const PORT = process.env.PORT || 3000;
 const ROOT = __dirname;
 const SCORES_PATH = process.env.SCORES_PATH || path.join(ROOT, "Decade", "data", "scores.json");
 const MAX_ENTRIES = 100;
-const SALT = process.env.LOGIN_SALT || "decade-login-salt-v1";
-let loginPasswordHash = null;
+// Login: client sends SHA-256 hash of password; server compares with hash of LOGIN_PASSWORD (no plain password over the wire)
+let expectedPasswordHashHex = null;
+
+function sha256Hex(text) {
+	return crypto.createHash("sha256").update(text, "utf8").digest("hex");
+}
 
 function initLoginHash() {
 	const pwd = process.env.LOGIN_PASSWORD;
@@ -24,17 +28,19 @@ function initLoginHash() {
 		console.warn(
 			"[Decade] LOGIN_PASSWORD not set: login will reject all passwords. Set LOGIN_PASSWORD for production."
 		);
-		loginPasswordHash = "";
+		expectedPasswordHashHex = "";
 		return;
 	}
-	loginPasswordHash = crypto.scryptSync(pwd, SALT, 64).toString("hex");
+	expectedPasswordHashHex = sha256Hex(pwd);
 }
 
-function checkPassword(plain) {
-	if (!loginPasswordHash) return false;
-	const h = crypto.scryptSync(plain, SALT, 64);
-	const buf = Buffer.from(loginPasswordHash, "hex");
-	return buf.length === h.length && crypto.timingSafeEqual(buf, h);
+function checkPasswordHash(receivedHashHex) {
+	if (!expectedPasswordHashHex || typeof receivedHashHex !== "string") return false;
+	// Must be 64-char hex (SHA-256)
+	if (!/^[a-f0-9]{64}$/i.test(receivedHashHex)) return false;
+	const expected = Buffer.from(expectedPasswordHashHex, "hex");
+	const received = Buffer.from(receivedHashHex, "hex");
+	return expected.length === received.length && crypto.timingSafeEqual(expected, received);
 }
 
 const MIMES = {
@@ -136,8 +142,8 @@ async function createApp(req, res) {
 		}
 		try {
 			const body = await parseBody(req);
-			const password = typeof body.password === "string" ? body.password : "";
-			if (checkPassword(password)) {
+			const passwordHash = typeof body.passwordHash === "string" ? body.passwordHash.trim() : "";
+			if (checkPasswordHash(passwordHash)) {
 				res.writeHead(200);
 				res.end(JSON.stringify({ ok: true }));
 			} else {

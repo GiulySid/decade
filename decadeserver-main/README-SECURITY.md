@@ -1,10 +1,10 @@
 # Decade server – security setup
 
-## Password (backend check)
+## Password (backend check, no plain password sent)
 
--  Login password is **checked on the server** only. Set the expected password via env:
-   -  **`LOGIN_PASSWORD`** – plain password (hashed with scrypt on the server; never stored in code).
--  Optional: **`LOGIN_SALT`** – salt for hashing (defaults to a fixed value; override for extra security).
+-  The **plain password is never sent**. The client hashes it with **SHA-256** and sends only the hash; the server compares it to the hash of the expected password.
+-  Set the expected password via env:
+   -  **`LOGIN_PASSWORD`** – the correct password (server hashes it and compares to the received hash).
 -  If `LOGIN_PASSWORD` is not set, all login attempts are rejected.
 
 Example:
