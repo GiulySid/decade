@@ -37,9 +37,19 @@ const App = (function () {
 			// Initialize core modules (order matters!)
 			Storage.isAvailable(); // Check storage availability
 
-			// User-requested: wipe auth/progress keys on every refresh/start
+			// User-requested: wipe auth/progress on refresh; keep name/auth when coming from login
 			if (typeof Storage !== "undefined" && typeof Storage.clearBootKeys === "function") {
-				Storage.clearBootKeys();
+				const justLoggedIn =
+					typeof sessionStorage !== "undefined" && sessionStorage.getItem("decade_just_logged_in") === "1";
+				if (justLoggedIn) {
+					sessionStorage.removeItem("decade_just_logged_in");
+					Storage.clearBootKeys({ preserveAuth: true });
+				} else {
+					if (typeof sessionStorage !== "undefined") {
+						sessionStorage.removeItem("decade_player_name");
+					}
+					Storage.clearBootKeys();
+				}
 			}
 			StateManager.init();
 			Input.init();

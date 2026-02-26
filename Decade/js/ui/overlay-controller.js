@@ -829,13 +829,17 @@ const OverlayController = (function () {
 		const bonusUnlocked =
 			typeof StateManager.getUnlockedBonuses === "function" ? StateManager.getUnlockedBonuses() : [];
 
+		const payload = { name: finalName, score, collectibles, bonusUnlocked };
 		try {
-			await ScoresAPI.submitScore({
-				name: finalName,
-				score,
-				collectibles,
-				bonusUnlocked,
-			});
+			try {
+				await ScoresAPI.updateScore(payload);
+			} catch (updateErr) {
+				if (updateErr && updateErr.message && updateErr.message.includes("Name not found")) {
+					await ScoresAPI.submitScore(payload);
+				} else {
+					throw updateErr;
+				}
+			}
 			_lastSubmittedName = finalName;
 			_pendingWebcamAfterScores = true;
 			show("scores", { fromGameEnd: true, highlightName: finalName });
@@ -975,9 +979,7 @@ const OverlayController = (function () {
 	function _handleWebcamPlayAgain() {
 		_stopWebcam();
 		hideAll();
-		if (typeof sessionStorage !== "undefined") {
-			sessionStorage.removeItem("decade_player_name");
-		}
+		// Keep decade_player_name (and auth) so user stays "logged in"; state/score/collectibles reset below
 		if (typeof StateManager !== "undefined" && StateManager.resetAllProgress) {
 			StateManager.resetAllProgress();
 		} else if (typeof StateManager !== "undefined" && StateManager.reset) {

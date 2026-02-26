@@ -161,10 +161,7 @@ const LevelManager = (function () {
 			StateManager.completeLevel(levelNum, score);
 		}
 
-		// Submit score on level transition (skip final level - name entry handles it)
-		if (levelNum >= 1 && levelNum < 10) {
-			_submitCurrentScore();
-		}
+		// Score is only submitted when user clicks "SAVE SCORE & CONTINUE" at end (name entry overlay)
 
 		// Stop the game
 		if (_currentGame && typeof _currentGame.stop === "function") {
@@ -423,7 +420,6 @@ const LevelManager = (function () {
 		}
 
 		if (shouldPlayFinalBonus) {
-			_submitCurrentScore();
 			await unloadCurrentGame();
 			await loadLevel(10.5);
 			setTimeout(() => {
@@ -466,7 +462,6 @@ const LevelManager = (function () {
 			_currentGame.stop();
 		}
 		StateManager.completeLevel(4.5, score ?? 0);
-		_submitCurrentScore();
 		await unloadCurrentGame();
 
 		// Unlock next real level and proceed
@@ -488,7 +483,6 @@ const LevelManager = (function () {
 			_currentGame.stop();
 		}
 		StateManager.completeLevel(7.5, score ?? 0);
-		_submitCurrentScore();
 		await unloadCurrentGame();
 
 		Storage.unlockLevel(8);

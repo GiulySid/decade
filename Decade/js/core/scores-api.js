@@ -20,7 +20,7 @@ const ScoresAPI = (function () {
 	}
 
 	/**
-	 * Submit a score to the leaderboard
+	 * Submit a score to the leaderboard (insert new entry)
 	 * @param {Object} entry
 	 * @param {string} entry.name - 3–10 chars, A–Z, 0–9, _
 	 * @param {number} entry.score
@@ -42,6 +42,25 @@ const ScoresAPI = (function () {
 	}
 
 	/**
+	 * Update an existing score by name (key)
+	 * @param {Object} entry - same shape as submitScore
+	 * @returns {Promise<{ scores: Array, updatedAt: string }>}
+	 * @throws if name not found (404)
+	 */
+	async function updateScore(entry) {
+		const res = await fetch(BASE + "/scores", {
+			method: "PUT",
+			headers: { "Content-Type": "application/json" },
+			body: JSON.stringify(entry),
+		});
+		if (!res.ok) {
+			const err = await res.json().catch(() => ({}));
+			throw new Error(err.error || "Failed to update score");
+		}
+		return res.json();
+	}
+
+	/**
 	 * Check if backend is reachable
 	 */
 	async function isAvailable() {
@@ -53,7 +72,7 @@ const ScoresAPI = (function () {
 		}
 	}
 
-	return { fetchScores, submitScore, isAvailable };
+	return { fetchScores, submitScore, updateScore, isAvailable };
 })();
 
 window.ScoresAPI = ScoresAPI;

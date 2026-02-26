@@ -378,19 +378,22 @@ const Storage = (function () {
 	 * - decade_collectibles
 	 *
 	 * This does NOT clear settings or other keys.
+	 * @param {Object} [options] - { preserveAuth: true } to keep auth/name (e.g. after login redirect)
 	 */
-	function clearBootKeys() {
-		// decade_auth is not part of KEYS (login page), remove raw
-		try {
-			if (isAvailable()) {
-				localStorage.removeItem("decade_auth");
-			}
-		} catch (_) {}
-		try {
-			if (isSessionAvailable()) {
-				sessionStorage.removeItem("decade_auth");
-			}
-		} catch (_) {}
+	function clearBootKeys(options) {
+		const preserveAuth = options && options.preserveAuth === true;
+		if (!preserveAuth) {
+			try {
+				if (isAvailable()) {
+					localStorage.removeItem("decade_auth");
+				}
+			} catch (_) {}
+			try {
+				if (isSessionAvailable()) {
+					sessionStorage.removeItem("decade_auth");
+				}
+			} catch (_) {}
+		}
 
 		// Remove progress keys using our wrapper (handles correct storage)
 		try {
