@@ -108,6 +108,9 @@
 		// P1 sprites (still, step, block, kick - kick used for punch and kick)
 		const _p1Sprites = {};
 		let _p1SpritesLoaded = false;
+		// P2 (enemy) sprites – same set, player2_*.png
+		const _p2Sprites = {};
+		let _p2SpritesLoaded = false;
 		const _bgImages = {}; // round 1, 2, 3
 
 		// Effects
@@ -179,22 +182,41 @@
 			const base = "Decade/assets/sprites/tekken/";
 			const names = ["still", "step", "block", "kick"];
 			const sides = ["left", "right"];
-			let loaded = 0;
-			const total = names.length * sides.length;
+			let p1Loaded = 0;
+			const totalPerPlayer = names.length * sides.length;
 			names.forEach((name) => {
 				sides.forEach((side) => {
 					const key = `${name}_${side}`;
 					const img = new Image();
 					img.onload = () => {
 						_p1Sprites[key] = img;
-						loaded++;
-						if (loaded >= total) _p1SpritesLoaded = true;
+						p1Loaded++;
+						if (p1Loaded >= totalPerPlayer) _p1SpritesLoaded = true;
 					};
 					img.onerror = () => {
-						loaded++;
-						if (loaded >= total) _p1SpritesLoaded = true;
+						p1Loaded++;
+						if (p1Loaded >= totalPerPlayer) _p1SpritesLoaded = true;
 					};
 					img.src = `${base}player1_${name}_${side}.png`;
+				});
+			});
+
+			// Load P2 (enemy) sprites – player2_*.png
+			let p2Loaded = 0;
+			names.forEach((name) => {
+				sides.forEach((side) => {
+					const key = `${name}_${side}`;
+					const img = new Image();
+					img.onload = () => {
+						_p2Sprites[key] = img;
+						p2Loaded++;
+						if (p2Loaded >= totalPerPlayer) _p2SpritesLoaded = true;
+					};
+					img.onerror = () => {
+						p2Loaded++;
+						if (p2Loaded >= totalPerPlayer) _p2SpritesLoaded = true;
+					};
+					img.src = `${base}player2_${name}_${side}.png`;
 				});
 			});
 
@@ -980,23 +1002,23 @@
 		function _drawFighter(fighter) {
 			const x = fighter.x;
 			const y = fighter.y - FIGHTER_HEIGHT / 2;
+			const side = fighter.facing === 1 ? "right" : "left";
+			let spriteName;
+			if (fighter.state === "blocking") {
+				spriteName = `block_${side}`;
+			} else if (
+				fighter.state === "attacking" &&
+				(fighter.attackType === "punch" || fighter.attackType === "kick" || fighter.attackType === "heavy")
+			) {
+				spriteName = `kick_${side}`;
+			} else if (fighter.state === "walking" || fighter.state === "jumping") {
+				spriteName = `step_${side}`;
+			} else {
+				spriteName = `still_${side}`;
+			}
 
-			// P1: use sprites (still, step, block, kick - kick for both punch and kick)
+			// P1: use P1 sprites
 			if (fighter.isPlayer && _p1SpritesLoaded) {
-				const side = fighter.facing === 1 ? "right" : "left";
-				let spriteName;
-				if (fighter.state === "blocking") {
-					spriteName = `block_${side}`;
-				} else if (
-					fighter.state === "attacking" &&
-					(fighter.attackType === "punch" || fighter.attackType === "kick" || fighter.attackType === "heavy")
-				) {
-					spriteName = `kick_${side}`;
-				} else if (fighter.state === "walking" || fighter.state === "jumping") {
-					spriteName = `step_${side}`;
-				} else {
-					spriteName = `still_${side}`;
-				}
 				const img = _p1Sprites[spriteName];
 				if (img) {
 					const drawW = FIGHTER_WIDTH * 2.8;
@@ -1011,7 +1033,23 @@
 				}
 			}
 
-			// Fallback: draw silhouette (P2 or before sprites load)
+			// P2 (enemy): use P2 sprites
+			if (!fighter.isPlayer && _p2SpritesLoaded) {
+				const img = _p2Sprites[spriteName];
+				if (img) {
+					const drawW = FIGHTER_WIDTH * 2.8;
+					const drawH = FIGHTER_HEIGHT * 2.8;
+					const dx = x - drawW / 2;
+					const dy = fighter.y - drawH + 65;
+					_ctx.drawImage(img, dx, dy, drawW, drawH);
+					if (fighter.attackTimer > 0 && fighter.attackType) {
+						_drawAttackBar(fighter);
+					}
+					return;
+				}
+			}
+
+			// Fallback: draw silhouette (before sprites load or missing assets)
 			CanvasRenderer.drawRect(x - FIGHTER_WIDTH / 2, y, FIGHTER_WIDTH, FIGHTER_HEIGHT, fighter.color);
 			CanvasRenderer.drawRect(
 				x - FIGHTER_WIDTH / 4,
