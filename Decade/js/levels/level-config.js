@@ -73,7 +73,7 @@ const LevelConfig = (function () {
 			gameType: "tetris",
 			description: "Where it all started...",
 			memory: {
-				text: "Our first meeting. I never knew life could change so quickly.",
+				text: "Life dropped a new block. COMBO! Two lines cleared.",
 				image: "Decade/assets/images/memories/2016.jpg", // TODO: Add image
 			},
 			config: {
@@ -91,7 +91,7 @@ const LevelConfig = (function () {
 			gameType: "bomberman",
 			description: "Building something together...",
 			memory: {
-				text: "The year we learned to walk the same path.",
+				text: "Clearing blocks by day. Building dreams by night.",
 				image: "Decade/assets/images/memories/2017.jpg",
 			},
 			config: {
@@ -109,7 +109,7 @@ const LevelConfig = (function () {
 			gameType: "shooter",
 			description: "Finding our rhythm...",
 			memory: {
-				text: "Dancing through life, one step at a time.",
+				text: "Run. Shoot. Survive.",
 				image: "Decade/assets/images/memories/2018.jpg",
 			},
 			config: {
@@ -128,7 +128,7 @@ const LevelConfig = (function () {
 			gameType: "beat-em-up",
 			description: "Learning to fight together...",
 			memory: {
-				text: "Every journey was better with you by my side.",
+				text: "Final boss: IKEA.",
 				image: "Decade/assets/images/memories/2019.jpg",
 			},
 			config: {
@@ -168,7 +168,7 @@ const LevelConfig = (function () {
 			gameType: "survival",
 			description: "Weathering challenges together...",
 			memory: {
-				text: "When the world stopped, we held on tighter.",
+				text: "World paused. We didn’t.",
 				image: "Decade/assets/images/memories/2020.jpg",
 			},
 			config: {
@@ -198,7 +198,7 @@ const LevelConfig = (function () {
 			gameType: "platformer",
 			description: "Weathering challenges together...",
 			memory: {
-				text: "When the world stopped, we held on tighter.",
+				text: "New world unlocked.",
 				image: "Decade/assets/images/memories/2020.jpg",
 			},
 			config: {
@@ -274,7 +274,7 @@ const LevelConfig = (function () {
 			gameType: "stealth-3d",
 			description: "Reaching for the stars...",
 			memory: {
-				text: "With you, even the impossible felt within reach.",
+				text: "Expansion pack installed.",
 				image: "Decade/assets/images/memories/2023.jpg",
 			},
 			config: {
@@ -299,7 +299,7 @@ const LevelConfig = (function () {
 			gameType: "fighter",
 			description: "Fighting for what matters...",
 			memory: {
-				text: "Every battle made us stronger together.",
+				text: "Strength unlocked.",
 				image: "Decade/assets/images/memories/2024.jpg",
 			},
 			config: {
@@ -325,7 +325,7 @@ const LevelConfig = (function () {
 			gameType: "tilt-3d",
 			description: "Roll to the goal. Don't fall.",
 			memory: {
-				text: "Ten years, and I would choose you again every single time.",
+				text: "Don’t fall.",
 				image: "Decade/assets/images/memories/2025.jpg",
 			},
 			config: {
