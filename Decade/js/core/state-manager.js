@@ -242,7 +242,8 @@ const StateManager = (function () {
 		if (data.score !== undefined) {
 			EventBus.emit(EventBus.Events.MINIGAME_SCORE, {
 				points: 0,
-				total: _state.levelData.score,
+				levelScore: _state.levelData.score,
+				total: _state.totalScore + _state.levelData.score,
 			});
 		}
 	}
@@ -268,7 +269,8 @@ const StateManager = (function () {
 
 		EventBus.emit(EventBus.Events.MINIGAME_SCORE, {
 			points: points,
-			total: _state.levelData.score,
+			levelScore: _state.levelData.score,
+			total: _state.totalScore + _state.levelData.score,
 		});
 	}
 

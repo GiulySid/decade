@@ -5,23 +5,18 @@
  */
 
 .hud {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    
-    height: 100%;
-    padding: 0 var(--space-3);
-    
-    background: var(--color-bg-hud);
-    border-bottom: 4px solid var(--color-border);
-    
-    /* Subtle gradient for depth */
-    background-image: linear-gradient(
-        to bottom,
-        rgba(255, 255, 255, 0.05) 0%,
-        transparent 50%,
-        rgba(0, 0, 0, 0.1) 100%
-    );
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+
+	height: 100%;
+	padding: 0 var(--space-3);
+
+	background: var(--color-bg-hud);
+	border-bottom: 4px solid var(--color-border);
+
+	/* Subtle gradient for depth */
+	background-image: linear-gradient(to bottom, rgba(255, 255, 255, 0.05) 0%, transparent 50%, rgba(0, 0, 0, 0.1) 100%);
 }
 
 /* =========================================
@@ -29,24 +24,24 @@
    ========================================= */
 
 .hud__section {
-    display: flex;
-    align-items: center;
-    gap: var(--space-2);
+	display: flex;
+	align-items: center;
+	gap: var(--space-2);
 }
 
 .hud__section--left {
-    justify-content: flex-start;
-    min-width: 200px;
+	justify-content: flex-start;
+	min-width: 200px;
 }
 
 .hud__section--center {
-    justify-content: center;
-    flex: 1;
+	justify-content: center;
+	flex: 1;
 }
 
 .hud__section--right {
-    justify-content: flex-end;
-    min-width: 200px;
+	justify-content: flex-end;
+	min-width: 200px;
 }
 
 /* =========================================
@@ -54,64 +49,67 @@
    ========================================= */
 
 .hud__label {
-    font-size: var(--font-size-xs);
-    color: var(--color-text-secondary);
-    letter-spacing: 1px;
+	font-size: var(--font-size-xs);
+	color: var(--color-text-secondary);
+	letter-spacing: 1px;
 }
 
 .hud__value {
-    font-size: var(--font-size-md);
-    color: var(--color-text-accent);
-    min-width: 40px;
-    text-align: center;
+	font-size: var(--font-size-md);
+	color: var(--color-text-accent);
+	min-width: 40px;
+	text-align: center;
 }
-
+.hud__value-level {
+	font-size: var(--font-size-md);
+	color: var(--color-accent-secondary);
+	min-width: 40px;
+	text-align: center;
+}
 .hud__collectibles {
-    margin-left: var(--space-2);
-    font-size: var(--font-size-sm);
-    letter-spacing: 2px;
-    color: var(--color-text-primary);
-    text-shadow: 1px 1px 0 rgba(0,0,0,0.6);
-    user-select: none;
-    white-space: nowrap;
+	margin-left: var(--space-2);
+	font-size: var(--font-size-sm);
+	letter-spacing: 2px;
+	color: var(--color-text-primary);
+	text-shadow: 1px 1px 0 rgba(0, 0, 0, 0.6);
+	user-select: none;
+	white-space: nowrap;
 }
 
 .hud__toast {
-    position: absolute;
-    right: var(--space-3);
-    top: calc(100% + 6px);
-    padding: 6px 10px;
-    border: 2px solid var(--color-border);
-    background: rgba(0,0,0,0.72);
-    color: #fff;
-    font-size: var(--font-size-xs);
-    letter-spacing: 1px;
-    opacity: 0;
-    transform: translateY(-4px);
-    transition: opacity 120ms ease-out, transform 120ms ease-out;
-    pointer-events: none;
-    z-index: 10;
+	position: absolute;
+	right: var(--space-3);
+	top: calc(100% + 6px);
+	padding: 6px 10px;
+	border: 2px solid var(--color-border);
+	background: rgba(0, 0, 0, 0.72);
+	color: #fff;
+	font-size: var(--font-size-xs);
+	letter-spacing: 1px;
+	opacity: 0;
+	transform: translateY(-4px);
+	transition: opacity 120ms ease-out, transform 120ms ease-out;
+	pointer-events: none;
+	z-index: 10;
 }
 
 .hud__toast--visible {
-    opacity: 1;
-    transform: translateY(0);
+	opacity: 1;
+	transform: translateY(0);
 }
 
 .hud__year {
-    font-size: var(--font-size-sm);
-    color: var(--color-accent-secondary);
-    padding-left: var(--space-2);
-    border-left: 2px solid var(--color-border);
+	font-size: var(--font-size-sm);
+	color: var(--color-accent-secondary);
+	padding-left: var(--space-2);
+	border-left: 2px solid var(--color-border);
 }
 
 .hud__title {
-    font-size: var(--font-size-lg);
-    color: var(--color-text-primary);
-    letter-spacing: 4px;
-    text-shadow: 
-        2px 2px 0 var(--color-accent-primary),
-        -1px -1px 0 rgba(0, 0, 0, 0.5);
+	font-size: var(--font-size-lg);
+	color: var(--color-text-primary);
+	letter-spacing: 4px;
+	text-shadow: 2px 2px 0 var(--color-accent-primary), -1px -1px 0 rgba(0, 0, 0, 0.5);
 }
 
 /* =========================================
@@ -120,29 +118,36 @@
 
 /* Score change animation */
 .hud__value--updating {
-    animation: hud-pulse 200ms ease-out;
+	animation: hud-pulse 200ms ease-out;
 }
 
 @keyframes hud-pulse {
-    0% { transform: scale(1); }
-    50% { transform: scale(1.2); color: #fff; }
-    100% { transform: scale(1); }
+	0% {
+		transform: scale(1);
+	}
+	50% {
+		transform: scale(1.2);
+		color: #fff;
+	}
+	100% {
+		transform: scale(1);
+	}
 }
 
 /* Level indicator glow */
 .hud__section--left::before {
-    content: '';
-    position: absolute;
-    left: 0;
-    top: 50%;
-    transform: translateY(-50%);
-    width: 4px;
-    height: 60%;
-    background: var(--color-accent-primary);
-    box-shadow: 0 0 10px var(--color-accent-primary);
+	content: "";
+	position: absolute;
+	left: 0;
+	top: 50%;
+	transform: translateY(-50%);
+	width: 4px;
+	height: 60%;
+	background: var(--color-accent-primary);
+	box-shadow: 0 0 10px var(--color-accent-primary);
 }
 
 .hud__section--left {
-    position: relative;
-    padding-left: var(--space-3);
+	position: relative;
+	padding-left: var(--space-3);
 }

@@ -68,11 +68,13 @@ const LevelManager = (function () {
 			Storage.saveGameState({ currentLevel: levelNum });
 		}
 
-		// Update HUD
+		// Update HUD: score = cumulative total, levelScore = current level only
+		const ld = StateManager.getLevelData ? StateManager.getLevelData() : {};
 		EventBus.emit(EventBus.Events.UI_HUD_UPDATE, {
 			level: levelNum,
 			year: config.year,
-			score: 0,
+			score: StateManager.getFinalScore ? StateManager.getFinalScore() : 0,
+			levelScore: ld.score != null ? ld.score : 0,
 		});
 
 		// Update timeline
