@@ -79,8 +79,7 @@
 				const loader = document.getElementById("login-loader");
 				// Same origin when served over HTTP(S) so traffic is encrypted with HTTPS
 				const o = typeof window !== "undefined" && window.location && window.location.origin;
-				const API_BASE =
-					o && (o.startsWith("http://") || o.startsWith("https://")) ? o : "https://decadeserver.onrender.com";
+				const API_BASE = "https://decadeserver.onrender.com";
 
 				async function loadLeaderboard() {
 					if (!scoresBody) return;
